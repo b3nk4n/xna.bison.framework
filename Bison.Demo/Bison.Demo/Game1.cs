@@ -9,6 +9,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
 using Microsoft.Xna.Framework.Media;
+using Bison.Framework.Screens;
+using Bison.Demo.Screens;
 
 namespace Bison.Demo
 {
@@ -19,6 +21,8 @@ namespace Bison.Demo
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+
+        ScreenManager screenManager = ScreenManager.Instance;
 
         public Game1()
         {
@@ -40,7 +44,13 @@ namespace Bison.Demo
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            screenManager.Initialize(new SplashScreen());
+            screenManager.Dimension = new Vector2(800, 480);
+
+            graphics.IsFullScreen = true;
+            graphics.PreferredBackBufferWidth = (int)screenManager.Dimension.X;
+            graphics.PreferredBackBufferHeight = (int)screenManager.Dimension.Y;
+            graphics.ApplyChanges();
 
             base.Initialize();
         }
@@ -54,7 +64,10 @@ namespace Bison.Demo
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            screenManager.GraphicsDevice = GraphicsDevice;
+            screenManager.SpriteBatch = spriteBatch; // these two before load content!!!
+
+            screenManager.LoadContent(this.Content);
         }
 
         /// <summary>
@@ -63,7 +76,7 @@ namespace Bison.Demo
         /// </summary>
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
+            screenManager.UnloadContent(this.Content);
         }
 
         /// <summary>
@@ -77,7 +90,7 @@ namespace Bison.Demo
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            // TODO: Add your update logic here
+            screenManager.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -88,9 +101,9 @@ namespace Bison.Demo
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
-            // TODO: Add your drawing code here
+            screenManager.Draw(spriteBatch);
 
             base.Draw(gameTime);
         }
