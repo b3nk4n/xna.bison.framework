@@ -13,31 +13,28 @@ namespace Bison.Framework.Screens
     /// <summary>
     /// The game screens base class.
     /// </summary>
-    public abstract class GameScreen : IGameComponent
+    public abstract class GameScreen : IScreen
     {
+        #region Members
+
         protected ContentManager content;
 
         protected Color backgroundColor;
 
         protected AudioManager audioManager = AudioManager.Instance;
 
-        [XmlIgnore]
-        public Type Type;
+        #endregion
+
+        #region Constructors
 
         public GameScreen()
         {
-            Type = this.GetType();
+            
         }
 
-        public void Initialize()
-        {
-            this.SetupInputs();
-        }
+        #endregion
 
-        /// <summary>
-        /// Sets up the inputs of the game screen.
-        /// </summary>
-        public abstract void SetupInputs();
+        #region Methods
 
         public virtual void LoadContent(ContentManager content)
         {
@@ -49,8 +46,33 @@ namespace Bison.Framework.Screens
             this.content.Unload();
         }
 
+        public abstract void SetupInputs();
+
         public abstract void Update(GameTime gameTime);
 
         public abstract void Draw(SpriteBatch batch);
+
+        #endregion
+
+        #region Properties
+
+        public bool IsActive
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+
+        public bool IsVisible
+        {
+            get 
+            {
+                return true;
+            }
+        }
+
+        #endregion
     }
 }

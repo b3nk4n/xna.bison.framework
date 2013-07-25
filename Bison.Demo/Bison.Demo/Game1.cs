@@ -76,7 +76,7 @@ namespace Bison.Demo
         /// </summary>
         protected override void UnloadContent()
         {
-            screenManager.UnloadContent(this.Content);
+            screenManager.UnloadContent();
         }
 
         /// <summary>

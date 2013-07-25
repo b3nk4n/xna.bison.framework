@@ -12,7 +12,7 @@ namespace Bison.Demo.Screens
 {
     public class SplashScreen : GameScreen
     {
-        public Image image = new Image();
+        //public Image image = new Image();
 
         public override void SetupInputs()
         {
@@ -22,27 +22,25 @@ namespace Bison.Demo.Screens
         public override void LoadContent(ContentManager content)
         {
             base.LoadContent(content);
-            image.LoadContent(content);
-            image.Position = new Vector2(100, 100);
-            image.Opacity = 0.5f;
-            image.Scale = new Vector2(0.5f, 1);
-            image.AddEffect("FaceEffect", new FadeEffect());
+            //image.Position = new Vector2(100, 100);
+            //image.Opacity = 0.5f;
+            //image.Scale = new Vector2(0.5f, 1);
+            //image.AddEffect("FaceEffect", new FadeEffect());
         }
 
         public override void UnloadContent()
         {
             base.UnloadContent();
-            image.UnloadContent();
         }
 
         public override void Update(GameTime gameTime)
         {
-            image.Update(gameTime);
+            //image.Update(gameTime);
         }
 
         public override void Draw(SpriteBatch batch)
         {
-            image.Draw(batch);
+            //image.Draw(batch);
         }
     }
 }

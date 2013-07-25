@@ -8,23 +8,15 @@ namespace Bison.Framework.Controls
 {
     public class FadeEffect : ImageEffect
     {
-        public float FadeSpeed;
+        /*public float FadeSpeed;
         public bool Increase;
+        private Image image;
 
-        public FadeEffect()
+        public FadeEffect(Image image)
         {
+            this.image = image;
             FadeSpeed = 1;
             Increase = false;
-        }
-
-        public override void LoadContent(ref Image image)
-        {
-            base.LoadContent(ref image);
-        }
-
-        public override void UnloadContent()
-        {
-            base.UnloadContent();
         }
 
         public override void Update(GameTime gameTime)
@@ -59,6 +51,6 @@ namespace Bison.Framework.Controls
             {
                 image.Opacity = 1.0f;
             }
-        }
+        }*/
     }
 }

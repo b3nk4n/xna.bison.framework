@@ -9,25 +9,19 @@ using System.Text;
 
 namespace Bison.Framework.Controls
 {
-    public class Image : IGameComponent
+    public class Image// : IGameObject
     {
-        private ContentManager content;
-
-        public float Opacity;
-        public string Text;
-        public string FontPath;
-        public string Path;
+        /*public float Opacity;
         public Vector2 Position;
         public Vector2 Scale;
         public Rectangle SourceRect;
-
-        public bool IsActive;
 
         public Texture2D Texture;
         private Vector2 origion;
 
         public RenderTarget2D renderTarget;
-        public SpriteFont font;
+
+        public bool IsActive;
 
         private Dictionary<string, ImageEffect> effectList = new Dictionary<string,ImageEffect>();
 
@@ -59,41 +53,24 @@ namespace Bison.Framework.Controls
             }
         }
 
-        public Image()
+        public Image(Texture2D texture)
         {
-            Path = @"Textures/BisonLogo";
-            Text = string.Empty;
-            FontPath = @"Fonts/TestFont";
             Position = Vector2.Zero;
             Scale = Vector2.One;
             Opacity = 1.0f;
             SourceRect = Rectangle.Empty;
             IsActive = true;
-        }
-
-        public void Initialize()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void LoadContent(ContentManager content)
-        {
-            this.content = new ContentManager(content.ServiceProvider, "Content");
-
-            if (Path != null)
-            {
-                Texture = content.Load<Texture2D>(Path);
-            }
-
-            font = content.Load<SpriteFont>(FontPath);
+            this.Texture = texture;
+            
 
             Vector2 dimensions = Vector2.Zero;
 
-            if (Texture != null)
+            if (texture != null)
             {
                 dimensions.X += Texture.Width;
                 dimensions.Y = Math.Max(Texture.Height, font.MeasureString(Text).Y);
-            } else
+            }
+            else
             {
                 dimensions.Y = font.MeasureString(Text).Y;
             }
@@ -124,16 +101,6 @@ namespace Bison.Framework.Controls
             ScreenManager.Instance.GraphicsDevice.SetRenderTarget(null);
         }
 
-        public void UnloadContent()
-        {
-            content.Unload();
-
-            foreach (var effect in effectList.Keys)
-            {
-                DeactivateEffect(effect);
-            }
-        }
-
         public void Update(GameTime gameTime)
         {
             foreach (var effect in effectList.Values)
@@ -151,6 +118,6 @@ namespace Bison.Framework.Controls
                 SourceRect.Height / 2);
             batch.Draw(Texture, Position, SourceRect, Color.White * Opacity,
                 0.0f, origion, Scale, SpriteEffects.None, 0.0f);
-        }
+        }*/
     }
 }

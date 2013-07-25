@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Bison.Framework.Screens
 {
-    public class ScreenManager
+    public class ScreenManager : IScreenManager
     {
         #region Members
 
@@ -69,11 +69,11 @@ namespace Bison.Framework.Screens
 
         public void LoadContent(ContentManager content)
         {
-            this.content = new ContentManager(content.ServiceProvider, "Content");
+            this.content = new ContentManager(content.ServiceProvider, content.RootDirectory);
             this.currentScreen.LoadContent(content);
         }
 
-        public void UnloadContent(ContentManager content)
+        public void UnloadContent()
         {
             this.content.Unload();
         }
