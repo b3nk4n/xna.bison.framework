@@ -23,25 +23,29 @@ namespace Bison.Framework.Screens
         private ContentManager content;
 
         /// <summary>
+        /// The games graphics device.
+        /// </summary>
+        private GraphicsDevice graphicsDevice;
+
+        /// <summary>
         /// Stores all game screens.
         /// </summary>
-        private Dictionary<string, GameScreen> screens = new Dictionary<string, GameScreen>();
+        private Dictionary<string, IScreen> screens = new Dictionary<string, IScreen>();
 
         /// <summary>
         /// Stacks the overlapped game screens.
         /// </summary>
-        private Stack<GameScreen> screenStack = new Stack<GameScreen>();
+        private Stack<IScreen> screenStack = new Stack<IScreen>();
 
-        private GameScreen currentScreen;
-
-        public GraphicsDevice GraphicsDevice;
-
-        public SpriteBatch SpriteBatch;
+        /// <summary>
+        /// The currently active screen.
+        /// </summary>
+        private IScreen currentScreen;
 
         /// <summary>
         /// The dimension of all screens.
         /// </summary>
-        private Vector2 dimension;
+        private Vector2 screenDimension;
 
         #endregion
 
@@ -51,7 +55,7 @@ namespace Bison.Framework.Screens
         /// Creates a screen manager instance.
         /// </summary>
         private ScreenManager() {
-            Dimension = new Vector2(800, 480);
+            ScreenDimension = new Vector2(800, 480);
         }
 
         #endregion
@@ -62,7 +66,7 @@ namespace Bison.Framework.Screens
         /// Initializes the screen manager with the initial screen.
         /// </summary>
         /// <param name="initialScreen"></param>
-        public void Initialize(GameScreen initialScreen)
+        public void Initialize(IScreen initialScreen)
         {
             this.currentScreen = initialScreen;
         }
@@ -85,11 +89,7 @@ namespace Bison.Framework.Screens
 
         public void Draw(SpriteBatch batch)
         {
-            batch.Begin();
-
             currentScreen.Draw(batch);
-
-            batch.End();
         }
 
         /// <summary>
@@ -124,25 +124,48 @@ namespace Bison.Framework.Screens
             }
         }
 
-        /// <summary>
-        /// Gets the dimension of any screen.
-        /// </summary>
-        public Vector2 Dimension
+        public GraphicsDevice GraphicsDevice
         {
             get
             {
-                return this.dimension;
+                return this.graphicsDevice;
             }
             set
             {
-                this.dimension = value;
+                this.graphicsDevice = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the dimension of any screen.
+        /// </summary>
+        public Vector2 ScreenDimension
+        {
+            get
+            {
+                return this.screenDimension;
+            }
+            set
+            {
+                this.screenDimension = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the dimension of any screen.
+        /// </summary>
+        public Rectangle Viewport
+        {
+            get
+            {
+                return this.graphicsDevice.Viewport.Bounds;
             }
         }
 
         /// <summary>
         /// Gets the new screen.
         /// </summary>
-        public GameScreen NewScreen
+        public IScreen NewScreen
         {
             get
             {

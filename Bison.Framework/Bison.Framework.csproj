@@ -42,6 +42,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Devices.Sensors, Version=7.0.0.0, Culture=neutral, PublicKeyToken=24eec0d8c86cda1e, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Phone, Version=7.0.0.0, Culture=neutral, PublicKeyToken=24eec0d8c86cda1e, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Xna.Framework" />
     <Reference Include="Microsoft.Xna.Framework.Game" />
     <Reference Include="Microsoft.Xna.Framework.Graphics" />
@@ -67,6 +68,7 @@
     <Compile Include="Audio\AudioEffect.cs" />
     <Compile Include="Audio\AudioManager.cs" />
     <Compile Include="Audio\AudioSong.cs" />
+    <Compile Include="BisonGame.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="Controls\FadeEffect.cs" />
     <Compile Include="Controls\Image.cs" />

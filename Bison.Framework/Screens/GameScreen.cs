@@ -1,4 +1,5 @@
 using Bison.Framework.Audio;
+using Bison.Framework.Inputs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -23,13 +24,15 @@ namespace Bison.Framework.Screens
 
         protected AudioManager audioManager = AudioManager.Instance;
 
+        protected GameInput gameInput;
+
         #endregion
 
         #region Constructors
 
         public GameScreen()
         {
-            
+            gameInput = new GameInput();
         }
 
         #endregion
@@ -48,13 +51,45 @@ namespace Bison.Framework.Screens
 
         public abstract void SetupInputs();
 
-        public abstract void Update(GameTime gameTime);
+        public void Update(GameTime gameTime)
+        {
+            gameInput.BeginUpdate();
+#if DEBUG
+            // touchIndicator.Update(gameTime, content);
+#endif
 
-        public abstract void Draw(SpriteBatch batch);
+            UpdateScreen(gameTime);
+
+            gameInput.EndUpdate();
+        }
+
+        protected abstract void UpdateScreen(GameTime gameTime);
+
+        public void Draw(SpriteBatch batch)
+        {
+            batch.Begin();
+
+            DrawScreen(batch);
+
+#if DEBUG
+            // touchIndicator.Draw(batch, content);
+#endif
+            batch.End();
+        }
+
+        protected abstract void DrawScreen(SpriteBatch batch);
 
         #endregion
 
         #region Properties
+
+        public ContentManager Content
+        {
+            get
+            {
+                return this.content;
+            }
+        }
 
         public bool IsActive
         {

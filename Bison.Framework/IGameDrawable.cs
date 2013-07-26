@@ -5,7 +5,7 @@ namespace Bison.Framework
     /// <summary>
     /// The interface for drawable objects.
     /// </summary>
-    interface IGameDrawable
+    public interface IGameDrawable
     {
         /// <summary>
         /// Draws the game component.

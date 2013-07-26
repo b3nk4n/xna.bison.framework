@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Bison.Framework.Screens
 {
-    interface IScreen : IManagedContent, IGameUpdateable, IGameDrawable
+    public interface IScreen : IManagedContent, IGameUpdateable, IGameDrawable
     {
         /// <summary>
         /// Sets up the inputs of the screen.

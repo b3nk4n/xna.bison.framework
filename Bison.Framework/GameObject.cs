@@ -10,7 +10,7 @@ namespace Bison.Framework
     /// <summary>
     /// Class which defines a basic game object.
     /// </summary>
-    public class GameObject : IGameUpdateable, IGameDrawable
+    public abstract class GameObject : IGameUpdateable, IGameDrawable
     {
         #region Members
 
@@ -50,9 +50,14 @@ namespace Bison.Framework
         protected SpriteEffects flipped = SpriteEffects.None;
 
         /// <summary>
-        /// The collision rectangle of the game object.
+        /// The collision radius.
         /// </summary>
-        protected Rectangle collisionRectangle;
+        protected float collisionRadius;                        // TODO: support multipe circles relative to center, which will also be rotated with (use Rectlangle class ?)
+
+        /// <summary>
+        /// The bounding box padding.
+        /// </summary>
+        protected Vector2 boundingBoxPadding;
 
         /// <summary>
         /// The animation strips.
@@ -68,6 +73,21 @@ namespace Bison.Framework
         /// The tint color.
         /// </summary>
         protected Color tintColor = Color.White;
+
+        /// <summary>
+        /// The game objects rotation in radian. The neutral look direction is to the right.
+        /// </summary>
+        protected float rotation;
+
+        /// <summary>
+        /// The game objects scale.
+        /// </summary>
+        protected Vector2 scale = Vector2.One;
+
+        /// <summary>
+        /// The layer depth for the rendering.
+        /// </summary>
+        protected float layerDepth;
 
         #endregion
 
@@ -85,6 +105,86 @@ namespace Bison.Framework
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// Rotates the game object to the given location in world coordinates.
+        /// </summary>
+        /// <param name="worldPosition">The world location to face to</param>
+        public void RotateTo(Vector2 worldLocation)
+        {
+            Vector2 direction = worldLocation - this.worldLocation;
+            RotateToDirection(direction);
+        }
+
+        /// <summary>
+        /// Rotates the game object to the given look direction.
+        /// </summary>
+        /// <param name="direction">The look direction</param>
+        public void RotateToDirection(Vector2 direction)
+        {
+            this.Rotation = (float)Math.Atan2(direction.Y, direction.X);
+        }
+
+        /// <summary>
+        /// Checks the boundig box collision.
+        /// </summary>
+        /// <param name="otherBox">The other bounding box</param>
+        /// <returns>TRUE, of both bounding boxes are intersecting</returns>
+        public bool IsBoxColliding(Rectangle otherBox)
+        {
+            return this.BoundingBox.Intersects(otherBox);
+        }
+
+        /// <summary>
+        /// Checks the boundig box collision.
+        /// </summary>
+        /// <param name="other">The other game object</param>
+        /// <returns>TRUE, of both bounding boxes are intersecting</returns>
+        public bool IsBoxColliding(GameObject other)
+        {
+            return IsBoxColliding(other.BoundingBox);
+        }
+
+        /// <summary>
+        /// Checks the circle collision.
+        /// </summary>
+        /// <param name="otherCenter">The other objects center</param>
+        /// <param name="otherRadius">The other objects radius</param>
+        /// <returns>TRUE, if both collision circles are intersecting</returns>
+        public bool IsCircleColliding(Vector2 otherCenter, float otherRadius)
+        {
+            if (Vector2.Distance(this.WorldCenter, otherCenter) < this.CollisionRadius + otherRadius)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Checks the circle collision.
+        /// </summary>
+        /// <param name="other">THe other game object</param>
+        /// <returns>TRUE, if both collision circles are intersecting</returns>
+        public bool IsCircleColliding(GameObject other)
+        {
+            return this.IsCircleColliding(other.WorldCenter, other.CollisionRadius);
+        }
+
+        /// <summary>
+        /// Play the animation strip with the given name.
+        /// </summary>
+        /// <param name="name">The animation strips name</param>
+        public void PlayAnimation(string name)
+        {
+            if (!string.IsNullOrEmpty(name) && animations.ContainsKey(name))
+            {
+                currentAnimation = name;
+                animations[currentAnimation].Play();
+            }
+        }
 
         /// <summary>
         /// Updates the game objects animation and position.
@@ -111,13 +211,14 @@ namespace Bison.Framework
                 {
                     batch.Draw(
                         animations[currentAnimation].Texture,
-                        Camera.WorldToScreen(WorldRectangle),
+                        Camera.WorldToScreen(WorldCenter),
                         animations[currentAnimation].FrameRectangle,
                         tintColor,
-                        0.0f,
-                        Vector2.Zero,
+                        rotation,
+                        new Vector2(frameWidth / 2, frameHeight / 2),
+                        scale,
                         flipped,
-                        0.0f);
+                        layerDepth);
                 }
             }
         }
@@ -162,19 +263,6 @@ namespace Bison.Framework
                 {
                     animations[currentAnimation].Update(gameTime);
                 }
-            }
-        }
-
-        /// <summary>
-        /// Play the animation strip with the given name.
-        /// </summary>
-        /// <param name="name">The animation strips name</param>
-        private void PlayAnimation(string name)
-        {
-            if (!string.IsNullOrEmpty(name) && animations.ContainsKey(name))
-            {
-                currentAnimation = name;
-                animations[currentAnimation].Play();
             }
         }
 
@@ -256,21 +344,46 @@ namespace Bison.Framework
         }
 
         /// <summary>
-        /// Gets or sets the collision rectangle in world coordinates.
+        /// Gets or sets the collision radius.
         /// </summary>
-        public Rectangle CollisionRectangle
+        public float CollisionRadius
         {
             get
             {
-                return new Rectangle(
-                    (int)worldLocation.X + collisionRectangle.X,
-                    (int)worldLocation.Y + collisionRectangle.Y,
-                    collisionRectangle.Width,
-                    collisionRectangle.Height);
+                return this.collisionRadius;
             }
             set
             {
-                this.collisionRectangle = value;
+                this.collisionRadius = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the bounding box padding.
+        /// </summary>
+        public Vector2 BoundingBoxPadding
+        {
+            get
+            {
+                return this.boundingBoxPadding;
+            }
+            set
+            {
+                this.boundingBoxPadding = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the collision bounding box in world coordinates.
+        /// </summary>
+        public Rectangle BoundingBox
+        {
+            get
+            {
+                return new Rectangle((int)(worldLocation.X + boundingBoxPadding.X),
+                                     (int)(worldLocation.Y + boundingBoxPadding.Y),
+                                     frameWidth - ((int)(2 * boundingBoxPadding.X)),
+                                     frameHeight - ((int)(2 * boundingBoxPadding.Y)));
             }
         }
 
@@ -286,6 +399,51 @@ namespace Bison.Framework
             set
             {
                 this.tintColor = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the game objects rotation.
+        /// </summary>
+        public float Rotation
+        {
+            get
+            {
+                return this.rotation;
+            }
+            set
+            {
+                this.rotation = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the game objects scale.
+        /// </summary>
+        public Vector2 Scale
+        {
+            get
+            {
+                return this.scale;
+            }
+            set
+            {
+                this.scale = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the layer depth.
+        /// </summary>
+        public float LayerDepth
+        {
+            get
+            {
+                return this.layerDepth;
+            }
+            set
+            {
+                this.layerDepth = value;
             }
         }
 

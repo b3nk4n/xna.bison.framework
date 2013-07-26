@@ -11,10 +11,7 @@
 //
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO.IsolatedStorage;
-
 
 namespace Microsoft.Phone.Applications.Common
 {
@@ -55,13 +52,15 @@ namespace Microsoft.Phone.Applications.Common
             if (IsolatedStorageSettings.ApplicationSettings.Contains(key))
             {
                 if (IsolatedStorageSettings.ApplicationSettings[key] != value)
-                { // set to the value if it is different
+                {
+                    // set to the value if it is different
                     IsolatedStorageSettings.ApplicationSettings[key] = value;
                     valueChanged = true;
                 }
             }
             else
-            { // key is not in dictionary, create it
+            { 
+                // key is not in dictionary, create it
                 IsolatedStorageSettings.ApplicationSettings.Add(key, value);
                 valueChanged = true;
             }

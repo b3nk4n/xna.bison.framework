@@ -5,7 +5,7 @@ namespace Bison.Framework
     /// <summary>
     /// Interface for managed content.
     /// </summary>
-    interface IManagedContent
+    public interface IManagedContent
     {
         /// <summary>
         /// Loads the content.

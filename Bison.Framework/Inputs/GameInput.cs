@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Bison.Framework.Inputs
 {
-    class GameInput
+    public class GameInput
     {
         Dictionary<string, Input> inputs = new Dictionary<string, Input>();
 

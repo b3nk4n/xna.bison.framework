@@ -3,13 +3,13 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Bison.Framework.Screens
 {
-    interface IScreenManager : IManagedContent
+    public interface IScreenManager : IManagedContent
     {
         /// <summary>
         /// Initializes the screen manager with the initial screen.
         /// </summary>
         /// <param name="initialScreen">The initial screen.</param>
-        void Initialize(GameScreen initialScreen);
+        void Initialize(IScreen initialScreen);
 
         /// <summary>
         /// Updates the game component.

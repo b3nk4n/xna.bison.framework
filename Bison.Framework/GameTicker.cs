@@ -9,7 +9,7 @@ namespace Bison.Framework
     /// <summary>
     /// The game ticker class to simplify timed actions.
     /// </summary>
-    class GameTicker : IGameUpdateable
+    public class GameTicker : IGameUpdateable
     {
         #region Members
 
