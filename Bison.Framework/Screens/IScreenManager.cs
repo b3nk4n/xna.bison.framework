@@ -8,8 +8,8 @@ namespace Bison.Framework.Screens
         /// <summary>
         /// Initializes the screen manager with the initial screen.
         /// </summary>
-        /// <param name="initialScreen">The initial screen.</param>
-        void Initialize(IScreen initialScreen);
+        /// <param name="screenFactory">The screen factory.</param>
+        void Initialize(IScreenFactory screenFactory);
 
         /// <summary>
         /// Updates the game component.

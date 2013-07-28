@@ -4,10 +4,15 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 
 namespace Bison.Framework.Screens
 {
+    /// <summary>
+    /// The game screen manager.
+    /// </summary>
     public class ScreenManager : IScreenManager
     {
         #region Members
@@ -26,6 +31,11 @@ namespace Bison.Framework.Screens
         /// The games graphics device.
         /// </summary>
         private GraphicsDevice graphicsDevice;
+
+        /// <summary>
+        /// The screen factory.
+        /// </summary>
+        private IScreenFactory screenFactory;
 
         /// <summary>
         /// Stores all game screens.
@@ -47,6 +57,14 @@ namespace Bison.Framework.Screens
         /// </summary>
         private Vector2 screenDimension;
 
+        /// <summary>
+        /// The create
+        /// </summary>
+        /// <param name="screenName"></param>
+        /// <param name="changeScreen"></param>
+        /// <returns></returns>
+        //private delegate IScreen CreateScreen(string screenName, GameScreen.ChangeScreenHandler changeScreen);
+
         #endregion
 
         #region Constructors
@@ -63,45 +81,67 @@ namespace Bison.Framework.Screens
         #region Methods
 
         /// <summary>
-        /// Initializes the screen manager with the initial screen.
+        /// Initializes the screen manager with the used screen factory.
         /// </summary>
-        /// <param name="initialScreen"></param>
-        public void Initialize(IScreen initialScreen)
+        /// <param name="screenFactory">The factory class to create the game screens.</param>
+        public void Initialize(IScreenFactory screenFactory)
         {
-            this.currentScreen = initialScreen;
+            this.screenFactory = screenFactory;
         }
 
+        /// <summary>
+        /// Loads the content and the initial screen.
+        /// </summary>
+        /// <param name="content">The games content manager.</param>
         public void LoadContent(ContentManager content)
         {
             this.content = new ContentManager(content.ServiceProvider, content.RootDirectory);
-            this.currentScreen.LoadContent(content);
+            this.ChangeScreen(screenFactory.InitialScreenName);
         }
 
+        /// <summary>
+        /// Unloads the game content.
+        /// </summary>
         public void UnloadContent()
         {
             this.content.Unload();
         }
 
+        /// <summary>
+        /// Updates the active screens.
+        /// </summary>
+        /// <param name="gameTime">The elapsed game time.</param>
         public void Update(GameTime gameTime)
         {
             currentScreen.Update(gameTime);
         }
 
+        /// <summary>
+        /// Rendres the active screens.
+        /// </summary>
+        /// <param name="batch">The sprite batch.</param>
         public void Draw(SpriteBatch batch)
         {
             currentScreen.Draw(batch);
         }
 
         /// <summary>
-        /// Adds a new screen.
+        /// Changes the screen.
         /// </summary>
-        /// <param name="screen">The new screen.</param>
-        public void AddScreen(GameScreen screen)
+        /// <param name="screenName">The screen name.</param>
+        private void ChangeScreen(string screenName)
         {
-            screenStack.Push(screen);
-            currentScreen.UnloadContent();
-            currentScreen = screen;
-            currentScreen.LoadContent(this.content);
+            if (!screens.ContainsKey(screenName))
+            {
+                screens.Add(
+                    screenName,
+                    screenFactory.CreateScreen(screenName,
+                        new GameScreen.ChangeScreenHandler(ChangeScreen)));
+                screens[screenName].LoadContent(this.content);
+            }
+
+            currentScreen = screens[screenName];
+            currentScreen.Activate();
         }
 
         #endregion
@@ -124,6 +164,9 @@ namespace Bison.Framework.Screens
             }
         }
 
+        /// <summary>
+        /// Gets the graphics device.
+        /// </summary>
         public GraphicsDevice GraphicsDevice
         {
             get

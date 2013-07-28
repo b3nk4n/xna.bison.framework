@@ -11,5 +11,10 @@ namespace Bison.Framework.Screens
         /// Sets up the inputs of the screen.
         /// </summary>
         void SetupInputs();
+
+        /// <summary>
+        /// Activates the screen.
+        /// </summary>
+        void Activate();
     }
 }

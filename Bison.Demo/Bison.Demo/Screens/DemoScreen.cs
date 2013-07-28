@@ -15,6 +15,12 @@ namespace Bison.Demo.Screens
         bool tapped = false;
         SpriteFont font;
 
+        public DemoScreen(ChangeScreenHandler changeScreen)
+            : base(changeScreen)
+        {
+
+        }
+
         public override void SetupInputs()
         {
             gameInput.AddTouchTapInput(

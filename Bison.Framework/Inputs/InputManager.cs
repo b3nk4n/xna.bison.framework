@@ -5,11 +5,13 @@ using System.Collections.Generic;
 
 namespace Bison.Framework.Inputs
 {
-    public class GameInput
+    public class InputManager
     {
+        private static InputManager instance;
+
         Dictionary<string, Input> inputs = new Dictionary<string, Input>();
 
-        public GameInput()
+        private InputManager()
         {
         }
 
@@ -245,5 +247,22 @@ namespace Bison.Framework.Inputs
         {
             return MyInput(action).CurrentAccelerometerReading;
         }
+
+        #region Properties
+
+        public static InputManager Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new InputManager();
+                }
+
+                return instance;
+            }
+        }
+
+        #endregion
     }
 }
