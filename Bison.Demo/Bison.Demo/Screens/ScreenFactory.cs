@@ -40,7 +40,7 @@ namespace Bison.Demo.Screens
         /// <param name="screenName">The screen name.</param>
         /// <param name="changeScreen">The change screen handler.</param>
         /// <returns>The created screen.</returns>
-        public IScreen CreateScreen(string screenName, GameScreen.ChangeScreenHandler changeScreen)
+        public IScreen CreateScreen(string screenName, ChangeScreenHandler changeScreen)
         {
             switch (screenName)
             {

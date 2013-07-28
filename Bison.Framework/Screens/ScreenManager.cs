@@ -57,14 +57,6 @@ namespace Bison.Framework.Screens
         /// </summary>
         private Vector2 screenDimension;
 
-        /// <summary>
-        /// The create
-        /// </summary>
-        /// <param name="screenName"></param>
-        /// <param name="changeScreen"></param>
-        /// <returns></returns>
-        //private delegate IScreen CreateScreen(string screenName, GameScreen.ChangeScreenHandler changeScreen);
-
         #endregion
 
         #region Constructors
@@ -74,6 +66,9 @@ namespace Bison.Framework.Screens
         /// </summary>
         private ScreenManager() {
             ScreenDimension = new Vector2(800, 480);
+            Camera.WorldRectangle = new Rectangle(0, 0, 800, 480);
+            Camera.ViewPortHeight = 480;
+            Camera.ViewPortWidth = 800;
         }
 
         #endregion
@@ -136,7 +131,7 @@ namespace Bison.Framework.Screens
                 screens.Add(
                     screenName,
                     screenFactory.CreateScreen(screenName,
-                        new GameScreen.ChangeScreenHandler(ChangeScreen)));
+                        new ChangeScreenHandler(ChangeScreen)));
                 screens[screenName].LoadContent(this.content);
             }
 
@@ -202,17 +197,6 @@ namespace Bison.Framework.Screens
             get
             {
                 return this.graphicsDevice.Viewport.Bounds;
-            }
-        }
-
-        /// <summary>
-        /// Gets the new screen.
-        /// </summary>
-        public IScreen NewScreen
-        {
-            get
-            {
-                return this.screenStack.Peek();
             }
         }
 

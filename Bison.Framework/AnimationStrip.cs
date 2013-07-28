@@ -30,6 +30,11 @@ namespace Bison.Framework
         private int frameHeight;
 
         /// <summary>
+        /// The number of frames.
+        /// </summary>
+        private int frameCount;
+
+        /// <summary>
         /// The frame timer.
         /// </summary>
         private GameTicker frameTimer;
@@ -71,15 +76,18 @@ namespace Bison.Framework
         /// <summary>
         /// Creates a new animation strip instance.
         /// </summary>
-        /// <param name="texture">The texture</param>
-        /// <param name="name">The name</param>
-        /// <param name="frameWidth">The frame width</param>
-        /// <param name="frameTime">The frame delay</param>
-        public AnimationStrip(Texture2D texture, string name, int frameWidth, float frameTime)
+        /// <param name="texture">The texture.</param>
+        /// <param name="name">The name.</param>
+        /// <param name="frameWidth">The frame width.</param>
+        /// <param name="frameHeight">The frame height.</param>
+        /// <param name="frameTime">The frame delay.</param>
+        public AnimationStrip(Texture2D texture, string name, int frameWidth, int frameHeight, float frameTime)
         {
             this.texture = texture;
             this.name = name;
             this.frameWidth = frameWidth;
+            this.frameHeight = frameHeight;
+            this.frameCount = this.texture.Width / frameWidth;
             this.frameTimer = new GameTicker(frameTime);
         }
 
@@ -94,6 +102,7 @@ namespace Bison.Framework
         {
             this.currentFrameIndex = 0;
             this.finishedPlaying = false;
+            this.frameTimer.Reset();
 
             this.isActive = true;
         }
@@ -101,7 +110,7 @@ namespace Bison.Framework
         /// <summary>
         /// Updates the frame animation.
         /// </summary>
-        /// <param name="gameTime">The elapsed game time</param>
+        /// <param name="gameTime">The elapsed game time.</param>
         public void Update(GameTime gameTime)
         {
             if (isActive)
@@ -112,7 +121,7 @@ namespace Bison.Framework
                 {
                     ++currentFrameIndex;
 
-                    if (currentFrameIndex > FrameCount)
+                    if (currentFrameIndex >= FrameCount)
                     {
                         if (loopAnimation)
                         {
@@ -200,7 +209,7 @@ namespace Bison.Framework
         {
             get
             {
-                return this.texture.Width / frameWidth;
+                return this.frameCount;
             }
         }
 
@@ -268,6 +277,10 @@ namespace Bison.Framework
             get
             {
                 return this.isActive;
+            }
+            set
+            {
+                this.isActive = value;
             }
         }
 

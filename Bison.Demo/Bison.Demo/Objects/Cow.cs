@@ -10,44 +10,21 @@ namespace Bison.Demo.Objects
     class Cow : GameObject
     {
         public Cow(Texture2D tex1, Texture2D tex2, Texture2D tex3, Texture2D tex4)
+            : base (64, 64)
         {
-            animations.Add(
-                "cow1",
-                new AnimationStrip(
-                    tex1,
-                    "cow1",
-                    tex1.Height,
-                    0.25f));
+            AddAnimation("cow1", tex1, 0.25f);
 
-            animations.Add(
-                "cow2",
-                new AnimationStrip(
-                    tex2,
-                    "cow2",
-                    tex1.Height,
-                    0.25f));
-            animations["cow2"].NextAnimation = "cow1";
-            animations["cow2"].LoopAnimation = false;
+            AddAnimation("cow2", tex2, 0.25f);
+            Animations["cow2"].NextAnimation = "cow1";
+            Animations["cow2"].LoopAnimation = false;
 
-            animations.Add(
-                "cow3",
-                new AnimationStrip(
-                    tex3,
-                    "cow3",
-                    tex1.Height,
-                    0.25f));
-            animations["cow3"].NextAnimation = "cow1";
-            animations["cow3"].LoopAnimation = false;
+            AddAnimation("cow3", tex3, 0.25f);
+            Animations["cow3"].NextAnimation = "cow1";
+            Animations["cow3"].LoopAnimation = false;
 
-            animations.Add(
-                "cow4",
-                new AnimationStrip(
-                    tex4,
-                    "cow4",
-                    tex1.Height,
-                    0.25f));
-            animations["cow4"].NextAnimation = "cow2";
-            animations["cow4"].LoopAnimation = false;
+            AddAnimation("cow4", tex4, 0.25f);
+            Animations["cow4"].NextAnimation = "cow2";
+            Animations["cow4"].LoopAnimation = false;
         }
     }
 }

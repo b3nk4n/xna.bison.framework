@@ -27,6 +27,11 @@ namespace Bison.Demo.Screens
             
         }
 
+        public override void HandleInputs()
+        {
+            
+        }
+
         public override void LoadContent(ContentManager content)
         {
             base.LoadContent(content);

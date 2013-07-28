@@ -17,22 +17,22 @@ namespace Bison.Framework
         /// <summary>
         /// The location inside the world.
         /// </summary>
-        protected Vector2 worldLocation;
+        protected Vector2 location;
+
+        /// <summary>
+        /// The frame width.
+        /// </summary>
+        private int frameWidth;
+
+        /// <summary>
+        /// The frame height.
+        /// </summary>
+        private int frameHeight;
 
         /// <summary>
         /// The current velocity.
         /// </summary>
         protected Vector2 velocity;
-
-        /// <summary>
-        /// The frame width.
-        /// </summary>
-        protected int frameWidth;
-
-        /// <summary>
-        /// The frame heigth.
-        /// </summary>
-        protected int frameHeight;
 
         /// <summary>
         /// Indicates whether the game object is active or not.
@@ -62,12 +62,12 @@ namespace Bison.Framework
         /// <summary>
         /// The animation strips.
         /// </summary>
-        protected Dictionary<string, AnimationStrip> animations = new Dictionary<string, AnimationStrip>();
+        private IDictionary<string, AnimationStrip> animations = new Dictionary<string, AnimationStrip>();
 
         /// <summary>
         /// The name of the currently acitve animation strip.
         /// </summary>
-        protected string currentAnimation;
+        protected string currentAnimationName;
 
         /// <summary>
         /// The tint color.
@@ -96,8 +96,11 @@ namespace Bison.Framework
         /// <summary>
         /// Creates a new game object instance.
         /// </summary>
-        public GameObject()
+        public GameObject(int frameWidth, int frameHeight)
         {
+            this.frameWidth = frameWidth;
+            this.frameHeight = frameHeight;
+
             this.isActive = true;
             this.isVisible = true;
         }
@@ -112,7 +115,7 @@ namespace Bison.Framework
         /// <param name="worldPosition">The world location to face to</param>
         public void RotateTo(Vector2 worldLocation)
         {
-            Vector2 direction = worldLocation - this.worldLocation;
+            Vector2 direction = worldLocation - this.location;
             RotateToDirection(direction);
         }
 
@@ -153,7 +156,7 @@ namespace Bison.Framework
         /// <returns>TRUE, if both collision circles are intersecting</returns>
         public bool IsCircleColliding(Vector2 otherCenter, float otherRadius)
         {
-            if (Vector2.Distance(this.WorldCenter, otherCenter) < this.CollisionRadius + otherRadius)
+            if (Vector2.Distance(this.Center, otherCenter) < this.CollisionRadius + otherRadius)
             {
                 return true;
             }
@@ -170,7 +173,18 @@ namespace Bison.Framework
         /// <returns>TRUE, if both collision circles are intersecting</returns>
         public bool IsCircleColliding(GameObject other)
         {
-            return this.IsCircleColliding(other.WorldCenter, other.CollisionRadius);
+            return this.IsCircleColliding(other.Center, other.CollisionRadius);
+        }
+
+        protected void AddAnimation(string name, Texture2D texture, float frameTime)
+        {
+            animations.Add(name,
+                new AnimationStrip(
+                    texture,
+                    name,
+                    frameWidth,
+                    frameHeight,
+                    frameTime));
         }
 
         /// <summary>
@@ -181,8 +195,8 @@ namespace Bison.Framework
         {
             if (!string.IsNullOrEmpty(name) && animations.ContainsKey(name))
             {
-                currentAnimation = name;
-                animations[currentAnimation].Play();
+                currentAnimationName = name;
+                CurrentAnimation.Play();
             }
         }
 
@@ -207,12 +221,12 @@ namespace Bison.Framework
         {
             if (IsVisible)
             {
-                if (animations.ContainsKey(currentAnimation))
+                if (animations.ContainsKey(currentAnimationName))
                 {
                     batch.Draw(
-                        animations[currentAnimation].Texture,
-                        Camera.WorldToScreen(WorldCenter),
-                        animations[currentAnimation].FrameRectangle,
+                        CurrentAnimation.Texture,
+                        Camera.WorldToScreen(Center),
+                        CurrentAnimation.FrameRectangle,
                         tintColor,
                         rotation,
                         new Vector2(frameWidth / 2, frameHeight / 2),
@@ -227,13 +241,13 @@ namespace Bison.Framework
         /// Updates the game objects position.
         /// </summary>
         /// <param name="gameTime">The elapes game time since the last frame</param>
-        public void updatePosition(GameTime gameTime)
+        private void updatePosition(GameTime gameTime)
         {
             float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             Vector2 moveDelta = velocity * elapsed;
 
-            Vector2 newPosition = worldLocation + moveDelta;
+            Vector2 newPosition = location + moveDelta;
             newPosition = new Vector2(
                 MathHelper.Clamp(
                     newPosition.X,
@@ -244,7 +258,7 @@ namespace Bison.Framework
                     0,
                     Camera.WorldRectangle.Height - frameHeight));
 
-            worldLocation = newPosition;
+            location = newPosition;
         }
 
         /// <summary>
@@ -253,15 +267,15 @@ namespace Bison.Framework
         /// <param name="gameTime">The elapes game time since the last frame</param>
         private void updateAnimation(GameTime gameTime)
         {
-            if (animations.ContainsKey(currentAnimation))
+            if (animations.ContainsKey(currentAnimationName))
             {
-                if (animations[currentAnimation].FinishedPlaying)
+                if (CurrentAnimation.FinishedPlaying)
                 {
-                    PlayAnimation(animations[currentAnimation].NextAnimation);
+                    PlayAnimation(CurrentAnimation.NextAnimation);
                 }
                 else
                 {
-                    animations[currentAnimation].Update(gameTime);
+                    CurrentAnimation.Update(gameTime);
                 }
             }
         }
@@ -292,7 +306,7 @@ namespace Bison.Framework
         {
             get
             {
-                return this.IsVisible;
+                return this.isVisible;
             }
             set
             {
@@ -303,43 +317,28 @@ namespace Bison.Framework
         /// <summary>
         /// Gets or sets the location in world coordinates.
         /// </summary>
-        public Vector2 WorldLocation
+        public Vector2 Location
         {
             get
             {
-                return this.worldLocation;
+                return this.location;
             }
             set
             {
-                this.worldLocation = value;
+                this.location = value;
             }
         }
 
         /// <summary>
         /// Gets the center in world coordinates.
         /// </summary>
-        public Vector2 WorldCenter
+        public Vector2 Center
         {
             get
             {
                 return new Vector2(
-                    (int)worldLocation.X + (int)(frameWidth / 2),
-                    (int)worldLocation.Y + (int)(frameHeight / 2));
-            }
-        }
-
-        /// <summary>
-        /// Gets the rectangle in world coordinates.
-        /// </summary>
-        public Rectangle WorldRectangle
-        {
-            get
-            {
-                return new Rectangle(
-                    (int)worldLocation.X,
-                    (int)worldLocation.Y,
-                    frameWidth,
-                    frameHeight);
+                    (int)location.X + (int)(frameWidth / 2),
+                    (int)location.Y + (int)(frameHeight / 2));
             }
         }
 
@@ -380,10 +379,63 @@ namespace Bison.Framework
         {
             get
             {
-                return new Rectangle((int)(worldLocation.X + boundingBoxPadding.X),
-                                     (int)(worldLocation.Y + boundingBoxPadding.Y),
+                return new Rectangle((int)(location.X + boundingBoxPadding.X),
+                                     (int)(location.Y + boundingBoxPadding.Y),
                                      frameWidth - ((int)(2 * boundingBoxPadding.X)),
                                      frameHeight - ((int)(2 * boundingBoxPadding.Y)));
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the velocity.
+        /// </summary>
+        public Vector2 Velocity
+        {
+            get
+            {
+                return this.velocity;
+            }
+            set
+            {
+                this.velocity = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the direction by keeping the current speed.
+        /// </summary>
+        public Vector2 Direction
+        {
+            get
+            {
+                if (this.velocity == Vector2.Zero)
+                {
+                    return Vector2.Zero;
+                }
+
+                return this.velocity / velocity.Length();
+            }
+            set
+            {
+                var normalizedDirection = value;
+                if (normalizedDirection != Vector2.Zero)
+                normalizedDirection.Normalize();
+                this.velocity = normalizedDirection * Speed;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the speed by keeping the current direction.
+        /// </summary>
+        public float Speed
+        {
+            get
+            {
+                return this.velocity.Length();
+            }
+            set
+            {
+                Velocity = Direction * value;
             }
         }
 
@@ -444,6 +496,39 @@ namespace Bison.Framework
             set
             {
                 this.layerDepth = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the animations dictionary.
+        /// </summary>
+        public IDictionary<string, AnimationStrip> Animations
+        {
+            get
+            {
+                return this.animations;
+            }
+        }
+
+        /// <summary>
+        /// Gets the current animation.
+        /// </summary>
+        public AnimationStrip CurrentAnimation
+        {
+            get
+            {
+                return this.animations[currentAnimationName];
+            }
+        }
+
+        /// <summary>
+        /// Gets the name of the current animation.
+        /// </summary>
+        public string CurrentAnimationName
+        {
+            get
+            {
+                return this.currentAnimationName;
             }
         }
 

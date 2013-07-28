@@ -17,7 +17,7 @@ namespace Bison.Framework.Screens
         /// <param name="screenName">The screen to create.</param>
         /// <param name="changeScreen">The change screen handler.</param>
         /// <returns>The requested screen instance.</returns>
-        IScreen CreateScreen(string screenName, GameScreen.ChangeScreenHandler changeScreen);
+        IScreen CreateScreen(string screenName, ChangeScreenHandler changeScreen);
 
         /// <summary>
         /// Gets the initial screen name.

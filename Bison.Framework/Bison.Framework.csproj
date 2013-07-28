@@ -73,6 +73,7 @@
     <Compile Include="Controls\FadeEffect.cs" />
     <Compile Include="Controls\Image.cs" />
     <Compile Include="Controls\ImageEffect.cs" />
+    <Compile Include="Controls\Text.cs" />
     <Compile Include="Extensions\SpriteBatchExtensions.cs" />
     <Compile Include="GameObject.cs" />
     <Compile Include="GameTicker.cs" />

@@ -18,6 +18,6 @@ namespace Bison.Framework
         /// <summary>
         /// Indicates whether the object is active.
         /// </summary>
-        bool IsActive { get; }
+        bool IsActive { get; set; }
     }
 }

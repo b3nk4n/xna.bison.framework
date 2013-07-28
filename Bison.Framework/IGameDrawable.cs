@@ -16,6 +16,6 @@ namespace Bison.Framework
         /// <summary>
         /// Indicates whether the object is visible or not.
         /// </summary>
-        bool IsVisible { get; }
+        bool IsVisible { get; set; }
     }
 }

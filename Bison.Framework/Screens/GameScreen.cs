@@ -39,15 +39,24 @@ namespace Bison.Framework.Screens
         protected InputManager gameInput = InputManager.Instance;
 
         /// <summary>
-        /// The change screen delegate.
-        /// </summary>
-        /// <param name="screenName">The screen name.</param>
-        public delegate void ChangeScreenHandler(string screenName);
-
-        /// <summary>
         /// The change screen hander method.
         /// </summary>
         private ChangeScreenHandler changeScreen;
+
+        /// <summary>
+        /// Indicates wether the screen handles inputs.
+        /// </summary>
+        private bool acceptInput;
+
+        /// <summary>
+        /// Indicates whether the screen is active.
+        /// </summary>
+        private bool isActive;
+
+        /// <summary>
+        /// Indicates whether the screen is visible.
+        /// </summary>
+        private bool isVisible;
 
         #endregion
 
@@ -91,11 +100,16 @@ namespace Bison.Framework.Screens
         public abstract void SetupInputs();
 
         /// <summary>
+        /// Handles the user inputs.
+        /// </summary>
+        public abstract void HandleInputs();
+
+        /// <summary>
         /// Activates the screen.
         /// </summary>
         public virtual void Activate()
         {
-
+            this.acceptInput = true;
         }
 
         /// <summary>
@@ -116,6 +130,12 @@ namespace Bison.Framework.Screens
             audioManager.Update(gameTime);
 
             gameInput.BeginUpdate();
+
+            // handle input if accepted
+            if (AcceptInputs)
+            {
+                HandleInputs();
+            }
 #if DEBUG
             // touchIndicator.Update(gameTime, content);
 #endif
@@ -168,24 +188,47 @@ namespace Bison.Framework.Screens
         }
 
         /// <summary>
-        /// Gets whether the game screen is active or not.
+        /// Gets or sets whether the game screen is active or not.
         /// </summary>
         public bool IsActive
         {
             get
             {
-                return true;
+                return this.isActive;
+            }
+            set
+            {
+                this.isActive = value;
             }
         }
 
         /// <summary>
-        /// Gets whether the game screen is visible or not.
+        /// Gets or sets whether the game screen is visible or not.
         /// </summary>
         public bool IsVisible
         {
             get 
             {
-                return true;
+                return this.isVisible;
+            }
+            set
+            {
+                this.isVisible = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets whether the screen accepts user inputs or not.
+        /// </summary>
+        public bool AcceptInputs
+        {
+            get
+            {
+                return this.acceptInput;
+            }
+            set
+            {
+                this.acceptInput = value;
             }
         }
 
