@@ -145,8 +145,7 @@ namespace Bison.Framework
         protected override void Initialize()
         {
             // set up screen manager configuration
-            screenManager.GraphicsDevice = GraphicsDevice;
-            initializeScreenManager();
+            InitializeScreenManager();
 
             graphics.IsFullScreen = true;
             graphics.PreferredBackBufferWidth = (int)screenManager.ScreenDimension.X;
@@ -159,7 +158,7 @@ namespace Bison.Framework
         /// <summary>
         /// Sets up the initial screen of the screen manager.
         /// </summary>
-        protected abstract void initializeScreenManager();
+        protected abstract void InitializeScreenManager();
 
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
@@ -189,10 +188,6 @@ namespace Bison.Framework
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-                this.Exit();
-
             screenManager.Update(gameTime);
 
             base.Update(gameTime);

@@ -21,9 +21,14 @@ namespace Bison.Demo.Screens
         public const string SplashScreen = "SplashScreen";
 
         /// <summary>
-        /// The demo game screen.
+        /// The game screen.
         /// </summary>
-        public const string DemoScreen = "DemoScreen";
+        public const string GameScreen = "GameScreen";
+
+        /// <summary>
+        /// The in game menu screen.
+        /// </summary>
+        public const string InMenuScreen = "InMenuScreen";
 
         #endregion
 
@@ -47,8 +52,11 @@ namespace Bison.Demo.Screens
                 case ScreenFactory.SplashScreen:
                     return new SplashScreen(changeScreen);
 
-                case ScreenFactory.DemoScreen:
-                    return new DemoScreen(changeScreen);
+                case ScreenFactory.GameScreen:
+                    return new GameScreen(changeScreen);
+
+                case ScreenFactory.InMenuScreen:
+                    return new InMenuScreen(changeScreen);
 
                 default:
                     throw new ArgumentException("The given screen name does not exist.");

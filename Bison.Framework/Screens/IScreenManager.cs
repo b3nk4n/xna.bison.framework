@@ -6,10 +6,12 @@ namespace Bison.Framework.Screens
     public interface IScreenManager : IManagedContent
     {
         /// <summary>
-        /// Initializes the screen manager with the initial screen.
+        /// Initializes the screen manager with the used screen factory.
         /// </summary>
-        /// <param name="screenFactory">The screen factory.</param>
-        void Initialize(IScreenFactory screenFactory);
+        /// <param name="game">The game instance.</param>
+        /// <param name="graphicsDevice">The graphics device.</param>
+        /// <param name="screenFactory">The factory class to create the game screens.</param>
+        void Initialize(Game game, GraphicsDevice graphicsDevice, IScreenFactory screenFactory);
 
         /// <summary>
         /// Updates the game component.

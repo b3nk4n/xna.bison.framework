@@ -3,6 +3,7 @@ using Bison.Framework.Inputs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,14 +15,19 @@ namespace Bison.Framework.Screens
     /// <summary>
     /// The game screens base class.
     /// </summary>
-    public abstract class GameScreen : IScreen
+    public abstract class Screen : IScreen
     {
         #region Members
 
         /// <summary>
+        /// The game screens type for the back button behavior.
+        /// </summary>
+        private readonly ScreenType screenType;
+
+        /// <summary>
         /// The content manager.
         /// </summary>
-        protected ContentManager content;
+        private ContentManager content;
 
         /// <summary>
         /// The screen background coloe.
@@ -31,22 +37,22 @@ namespace Bison.Framework.Screens
         /// <summary>
         /// The game audio manager.
         /// </summary>
-        protected AudioManager audioManager = AudioManager.Instance;
+        protected readonly AudioManager audioManager = AudioManager.Instance;
 
         /// <summary>
         /// The game input manager.
         /// </summary>
-        protected InputManager gameInput = InputManager.Instance;
+        protected readonly InputManager inputManager = InputManager.Instance;
 
         /// <summary>
         /// The change screen hander method.
         /// </summary>
-        private ChangeScreenHandler changeScreen;
+        private readonly ChangeScreenHandler changeScreen;
 
         /// <summary>
         /// Indicates wether the screen handles inputs.
         /// </summary>
-        private bool acceptInput;
+        private bool acceptInputs;
 
         /// <summary>
         /// Indicates whether the screen is active.
@@ -58,6 +64,11 @@ namespace Bison.Framework.Screens
         /// </summary>
         private bool isVisible;
 
+        /// <summary>
+        /// The screens random number generator.
+        /// </summary>
+        protected Random random = new Random();
+
         #endregion
 
         #region Constructors
@@ -66,9 +77,11 @@ namespace Bison.Framework.Screens
         /// Creates a new game screen instance.
         /// </summary>
         /// <param name="changeScreen">The change screen handler.</param>
-        public GameScreen(ChangeScreenHandler changeScreen)
+        /// <param name="screenType">The sreen type.</param>
+        public Screen(ChangeScreenHandler changeScreen, ScreenType screenType)
         {
             this.changeScreen = changeScreen;
+            this.screenType = screenType;
 
             SetupInputs();
         }
@@ -109,14 +122,14 @@ namespace Bison.Framework.Screens
         /// </summary>
         public virtual void Activate()
         {
-            this.acceptInput = true;
+            this.acceptInputs = true;
         }
 
         /// <summary>
         /// Changes the screen.
         /// </summary>
         /// <param name="screenName">The name of the requested screen.</param>
-        public void ChangeScreen(string screenName)
+        protected void ChangeScreen(string screenName)
         {
             changeScreen(screenName);
         }
@@ -129,8 +142,6 @@ namespace Bison.Framework.Screens
         {
             audioManager.Update(gameTime);
 
-            gameInput.BeginUpdate();
-
             // handle input if accepted
             if (AcceptInputs)
             {
@@ -140,15 +151,7 @@ namespace Bison.Framework.Screens
             // touchIndicator.Update(gameTime, content);
 #endif
             UpdateScreen(gameTime);
-
-            gameInput.EndUpdate();
         }
-
-        /// <summary>
-        /// Updates the screen.
-        /// </summary>
-        /// <param name="gameTime"></param>
-        protected abstract void UpdateScreen(GameTime gameTime);
 
         /// <summary>
         /// Renders the screen and the debug draw informations of the input manager.
@@ -156,15 +159,18 @@ namespace Bison.Framework.Screens
         /// <param name="batch">The sprite batch.</param>
         public void Draw(SpriteBatch batch)
         {
-            batch.Begin();
-
             DrawScreen(batch);
 
 #if DEBUG
             // touchIndicator.Draw(batch, content);
 #endif
-            batch.End();
         }
+
+        /// <summary>
+        /// Updates the screen.
+        /// </summary>
+        /// <param name="gameTime"></param>
+        protected abstract void UpdateScreen(GameTime gameTime);
 
         /// <summary>
         /// Renders the screen.
@@ -224,11 +230,22 @@ namespace Bison.Framework.Screens
         {
             get
             {
-                return this.acceptInput;
+                return this.acceptInputs;
             }
             set
             {
-                this.acceptInput = value;
+                this.acceptInputs = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the screen type.
+        /// </summary>
+        public ScreenType ScreenType
+        {
+            get
+            {
+                return this.screenType;
             }
         }
 

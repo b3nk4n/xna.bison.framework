@@ -11,25 +11,24 @@ using System.Text;
 
 namespace Bison.Demo.Screens
 {
-    class DemoScreen : GameScreen
+    class GameScreen : Screen
     {
         private const string SCREEN_TAP = "tap";
-        bool tapped = false;
         Text outlinedText;
         
         Cow cow;
         Cow rotatedCow;
         Cow scaledCow;
 
-        public DemoScreen(ChangeScreenHandler changeScreen)
-            : base(changeScreen)
+        public GameScreen(ChangeScreenHandler changeScreen)
+            : base(changeScreen, ScreenType.InGame)
         {
 
         }
 
         public override void SetupInputs()
         {
-            gameInput.AddTouchTapInput(
+            inputManager.AddTouchTapInput(
                 SCREEN_TAP,
                 ScreenManager.Instance.Viewport,
                 true);
@@ -37,9 +36,8 @@ namespace Bison.Demo.Screens
 
         public override void HandleInputs()
         {
-            if (gameInput.IsPressed(SCREEN_TAP))
+            if (inputManager.IsPressed(SCREEN_TAP))
             {
-                tapped = true;
                 cow.PlayAnimation("cow4");
                 outlinedText.DisplayText = "Test1234";
             }

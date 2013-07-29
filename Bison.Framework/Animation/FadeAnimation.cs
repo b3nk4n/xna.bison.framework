@@ -10,7 +10,7 @@ namespace Bison.Framework.Animation
 {
     class FadeAnimation : Animation
     {
-        private bool increase;
+        /*private bool increase;
         private float fadeSpeed;
         TimeSpan defaultTime;
         TimeSpan timer;
@@ -107,6 +107,6 @@ namespace Bison.Framework.Animation
                 this.defaultTime = value;
                 this.timer = defaultTime;
             }
-        }
+        }*/
     }
 }

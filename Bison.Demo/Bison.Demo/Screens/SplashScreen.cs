@@ -11,25 +11,22 @@ using System.Text;
 
 namespace Bison.Demo.Screens
 {
-    public class SplashScreen : GameScreen
+    public class SplashScreen : Screen
     {
         SpriteFont font;
         GameTicker splashTimer = new GameTicker(3.0f);
 
         public SplashScreen(ChangeScreenHandler changeScreen)
-            : base(changeScreen)
+            : base(changeScreen, ScreenType.Start)
         {
-
         }
 
         public override void SetupInputs()
         {
-            
         }
 
         public override void HandleInputs()
-        {
-            
+        {        
         }
 
         public override void LoadContent(ContentManager content)

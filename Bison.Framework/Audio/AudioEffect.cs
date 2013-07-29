@@ -7,12 +7,15 @@ using System.Text;
 
 namespace Bison.Framework.Audio
 {
+    /// <summary>
+    /// The class representing an audio effect with different characteristics.
+    /// </summary>
     public class AudioEffect
     {
         /// <summary>
         /// The different sound characteristics of the audio effect.
         /// </summary>
-        private List<SoundEffect> soundEffects;
+        private List<SoundEffect> soundEffects = new List<SoundEffect>();
 
         /// <summary>
         /// The used number generator to select a random sound effect.
@@ -24,6 +27,10 @@ namespace Bison.Framework.Audio
         /// </summary>
         private readonly GameTicker minTimeBetweenSoundEffectTimer;
 
+        /// <summary>
+        /// Creates a new audio effect instance.
+        /// </summary>
+        /// <param name="minTimeBetweenSoundEffect">The minimum time between two of those audio effects.</param>
         public AudioEffect(float minTimeBetweenSoundEffect)
         {
             minTimeBetweenSoundEffectTimer = new GameTicker(minTimeBetweenSoundEffect);
@@ -59,6 +66,10 @@ namespace Bison.Framework.Audio
             }
         }
 
+        /// <summary>
+        /// Updates the audio effect and its internal timers.
+        /// </summary>
+        /// <param name="gameTime">The elapsed game time.</param>
         public void Update(GameTime gameTime)
         {
             minTimeBetweenSoundEffectTimer.Update(gameTime);

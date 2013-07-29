@@ -11,6 +11,20 @@ namespace Bison.Framework.Screens
     /// <param name="screenName">The screen name.</param>
     public delegate void ChangeScreenHandler(string screenName);
 
+    /// <summary>
+    /// The supported back button behaviors.
+    /// </summary>
+    public enum ScreenType
+    {
+        Start,
+        InGame,
+        InGameMenu,
+        Other
+    }
+
+    /// <summary>
+    /// The interface for screens.
+    /// </summary>
     public interface IScreen : IManagedContent, IGameUpdateable, IGameDrawable
     {
         /// <summary>
@@ -34,9 +48,8 @@ namespace Bison.Framework.Screens
         void Activate();
 
         /// <summary>
-        /// Changes the screen.
+        /// Gets the screen type. Used for Back button behavior.
         /// </summary>
-        /// <param name="screenName">The name of the requested screen.</param>
-        void ChangeScreen(string screenName);
+        ScreenType ScreenType { get; }
     }
 }
