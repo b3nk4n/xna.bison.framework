@@ -11,8 +11,8 @@ namespace Bison.Demo.Screens
         Text pauseTitle;
           
 
-        public InMenuScreen(ChangeScreenHandler changeScreen)
-            : base(changeScreen, ScreenType.InGameMenu)
+        public InMenuScreen()
+            : base(AutomatedBackButtonBehavior.Close)
         {
         }
 

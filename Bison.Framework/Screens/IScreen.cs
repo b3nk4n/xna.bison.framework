@@ -6,20 +6,13 @@ using System.Text;
 namespace Bison.Framework.Screens
 {
     /// <summary>
-    /// The change screen delegate.
+    /// The automated Back button behavior controled by the framework.
     /// </summary>
-    /// <param name="screenName">The screen name.</param>
-    public delegate void ChangeScreenHandler(string screenName);
-
-    /// <summary>
-    /// The supported back button behaviors.
-    /// </summary>
-    public enum ScreenType
+    public enum AutomatedBackButtonBehavior
     {
-        Start,
-        InGame,
-        InGameMenu,
-        Other
+        Close,
+        GoBack,
+        None
     }
 
     /// <summary>
@@ -48,8 +41,13 @@ namespace Bison.Framework.Screens
         void Activate();
 
         /// <summary>
+        /// Custom Back button handler.
+        /// </summary>
+        void OnBackButtonPressed();
+
+        /// <summary>
         /// Gets the screen type. Used for Back button behavior.
         /// </summary>
-        ScreenType ScreenType { get; }
+        AutomatedBackButtonBehavior AutomatedBackButtonBehavior { get; }
     }
 }

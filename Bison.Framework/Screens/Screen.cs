@@ -22,7 +22,7 @@ namespace Bison.Framework.Screens
         /// <summary>
         /// The game screens type for the back button behavior.
         /// </summary>
-        private readonly ScreenType screenType;
+        private readonly AutomatedBackButtonBehavior automatedBackButtonBehavior;
 
         /// <summary>
         /// The content manager.
@@ -37,17 +37,12 @@ namespace Bison.Framework.Screens
         /// <summary>
         /// The game audio manager.
         /// </summary>
-        protected readonly AudioManager audioManager = AudioManager.Instance;
+        protected readonly AudioManager AudioManager = AudioManager.Instance;
 
         /// <summary>
         /// The game input manager.
         /// </summary>
-        protected readonly InputManager inputManager = InputManager.Instance;
-
-        /// <summary>
-        /// The change screen hander method.
-        /// </summary>
-        private readonly ChangeScreenHandler changeScreen;
+        protected readonly InputManager InputManager = InputManager.Instance;
 
         /// <summary>
         /// Indicates wether the screen handles inputs.
@@ -67,7 +62,7 @@ namespace Bison.Framework.Screens
         /// <summary>
         /// The screens random number generator.
         /// </summary>
-        protected Random random = new Random();
+        protected static readonly Random Random = new Random();
 
         #endregion
 
@@ -76,12 +71,10 @@ namespace Bison.Framework.Screens
         /// <summary>
         /// Creates a new game screen instance.
         /// </summary>
-        /// <param name="changeScreen">The change screen handler.</param>
-        /// <param name="screenType">The sreen type.</param>
-        public Screen(ChangeScreenHandler changeScreen, ScreenType screenType)
+        /// <param name="backButtonBehavior">The back button behavior.</param>
+        public Screen(AutomatedBackButtonBehavior backButtonBehavior)
         {
-            this.changeScreen = changeScreen;
-            this.screenType = screenType;
+            this.automatedBackButtonBehavior = backButtonBehavior;
 
             SetupInputs();
         }
@@ -126,21 +119,12 @@ namespace Bison.Framework.Screens
         }
 
         /// <summary>
-        /// Changes the screen.
-        /// </summary>
-        /// <param name="screenName">The name of the requested screen.</param>
-        protected void ChangeScreen(string screenName)
-        {
-            changeScreen(screenName);
-        }
-
-        /// <summary>
         /// Updates the screen and the games input manager.
         /// </summary>
         /// <param name="gameTime"></param>
         public void Update(GameTime gameTime)
         {
-            audioManager.Update(gameTime);
+            AudioManager.Update(gameTime);
 
             // handle input if accepted
             if (AcceptInputs)
@@ -164,6 +148,10 @@ namespace Bison.Framework.Screens
 #if DEBUG
             // touchIndicator.Draw(batch, content);
 #endif
+        }
+
+        public virtual void OnBackButtonPressed()
+        {
         }
 
         /// <summary>
@@ -241,11 +229,11 @@ namespace Bison.Framework.Screens
         /// <summary>
         /// Gets the screen type.
         /// </summary>
-        public ScreenType ScreenType
+        public AutomatedBackButtonBehavior AutomatedBackButtonBehavior
         {
             get
             {
-                return this.screenType;
+                return this.automatedBackButtonBehavior;
             }
         }
 

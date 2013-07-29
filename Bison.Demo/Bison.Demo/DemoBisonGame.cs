@@ -10,7 +10,10 @@ namespace Bison.Demo
     {
         protected override void InitializeScreenManager()
         {
-            screenManager.Initialize(this, this.GraphicsDevice, ScreenFactory.Instance);
+            screenManager.Initialize(
+                this,
+                this.GraphicsDevice,
+                new SplashScreen());
         }
     }
 }

@@ -44,25 +44,27 @@ namespace Bison.Framework.Screens
         /// </summary>
         private GraphicsDevice graphicsDevice;
 
-        /// <summary>
-        /// The screen factory.
-        /// </summary>
-        private IScreenFactory screenFactory;
+        private IScreen initialScreen;
 
         /// <summary>
         /// Stores all game screens.
         /// </summary>
-        private Dictionary<string, IScreen> screens = new Dictionary<string, IScreen>();
+        //private Dictionary<string, IScreen> screens = new Dictionary<string, IScreen>();
 
         /// <summary>
         /// Stacks the overlapped game screens.
         /// </summary>
-        private Stack<string> screenStack = new Stack<string>();
+        //private Stack<string> screenHistoryStack = new Stack<string>();
 
         /// <summary>
         /// The currently active screen.
         /// </summary>
-        private IScreen currentScreen;
+        //private IScreen currentScreen;
+        //private Stack<IScreen> currentScreens = new Stack<IScreen>();
+
+        private Stack<IScreen> screenStack = new Stack<IScreen>();
+
+        private Stack<IScreen> screenHistoryStack = new Stack<IScreen>();
 
         /// <summary>
         /// The dimension of all screens.
@@ -97,12 +99,13 @@ namespace Bison.Framework.Screens
         /// </summary>
         /// <param name="game">The game instance.</param>
         /// <param name="graphicsDevice">The graphics device.</param>
-        /// <param name="screenFactory">The factory class to create the game screens.</param>
-        public void Initialize(Game game, GraphicsDevice graphicsDevice, IScreenFactory screenFactory)
+        /// <param name="initialScreen">The games initial screen.</param>
+        public void Initialize(Game game, GraphicsDevice graphicsDevice, IScreen initialScreen)
         {
             this.game = game;
             this.graphicsDevice = graphicsDevice;
-            this.screenFactory = screenFactory;
+
+            this.initialScreen = initialScreen;
 
             this.setupInputs();
         }
@@ -125,7 +128,8 @@ namespace Bison.Framework.Screens
         public void LoadContent(ContentManager content)
         {
             this.content = new ContentManager(content.ServiceProvider, content.RootDirectory);
-            this.ChangeScreen(screenFactory.InitialScreenName);
+
+            this.addScreen(this.initialScreen);
         }
 
         /// <summary>
@@ -144,9 +148,14 @@ namespace Bison.Framework.Screens
         {
             inputManager.BeginUpdate();
 
-            this.handleBackButtonInput();
+            //currentScreen.Update(gameTime);
+            /*foreach (var screen in currentScreens)
+            {
+                screen.Update(gameTime);
+            }*/
+            screenStack.Peek().Update(gameTime);
 
-            currentScreen.Update(gameTime);
+            this.handleBackButtonInput();
 
             inputManager.EndUpdate();
         }
@@ -159,7 +168,11 @@ namespace Bison.Framework.Screens
         {
             batch.Begin();
 
-            currentScreen.Draw(batch);
+            //currentScreen.Draw(batch);
+            foreach (var screen in screenStack)
+            {
+                screen.Draw(batch);
+            }
 
             batch.End();
         }
@@ -167,11 +180,63 @@ namespace Bison.Framework.Screens
         /// <summary>
         /// Changes the screen.
         /// </summary>
-        /// <param name="screenName">The screen name.</param>
-        protected void ChangeScreen(string screenName)
+        /// <param name="screen">The screen to change to.</param>
+        public static void ChangeScreen(IScreen screen)
         {
-            // check for back button actions at first.
+            instance.changeScreen(screen, true);
+        }
 
+        /// <summary>
+        /// Adds the screen.
+        /// </summary>
+        /// <param name="screen">The screen to add to the screen stack.</param>
+        public static void AddScreen(IScreen screen)
+        {
+            instance.addScreen(screen);
+        }
+
+        /// <summary>
+        /// Changes the screen.
+        /// </summary>
+        /// <param name="screen">The screen to change to.</param>
+        private void changeScreen(IScreen screen, bool toHistory)
+        {
+            screen.LoadContent(this.content);
+
+            IScreen lastScreen = screenStack.Pop();
+            lastScreen.UnloadContent();
+
+            if (screen.AutomatedBackButtonBehavior == AutomatedBackButtonBehavior.GoBack)
+            {
+                screenHistoryStack.Push(lastScreen);
+            }
+            else
+            {
+                screenHistoryStack.Clear();
+            }
+
+            screenStack.Push(screen);
+            screen.Activate();
+        }
+
+        /// <summary>
+        /// Adds the screen.
+        /// </summary>
+        /// <param name="screen">The screen to add to the screen stack.</param>
+        private void addScreen(IScreen screen)
+        {
+            screen.LoadContent(this.content);
+
+            screenStack.Push(screen);
+            screen.Activate();
+        }
+
+        /// <summary>
+        /// Changes the screen.
+        /// </summary>
+        /// <param name="screenName">The screen name.</param>
+        /*protected void ChangeScreen(string screenName)
+        {
             if (!screens.ContainsKey(screenName))
             {
                 screens.Add(
@@ -181,9 +246,12 @@ namespace Bison.Framework.Screens
                 screens[screenName].LoadContent(this.content);
             }
 
-            currentScreen = screens[screenName];
-            currentScreen.Activate();
-        }
+            //currentScreen = screens[screenName];
+            //currentScreen.Activate();
+            currentScreens.Push(screens[screenName]);
+            currentScreens.Peek().Activate();
+        }*/
+
         /// <summary>
         /// Handles the back button input according the screens bahavior type.
         /// </summary>
@@ -191,21 +259,22 @@ namespace Bison.Framework.Screens
         {
             if (inputManager.IsPressed(ActionBack))
             {
-                switch (currentScreen.ScreenType)
+                switch (screenStack.Peek().AutomatedBackButtonBehavior)
                 {
-                    case ScreenType.Start:
-                        game.Exit();
+                    case AutomatedBackButtonBehavior.Close:
+                        screenStack.Pop();
+
+                        if (screenStack.Count == 0)
+                        {
+                            game.Exit();
+                        }
+
                         break;
-                    case ScreenType.InGame:
-                        // TODO: close overlay screen.
+                    case AutomatedBackButtonBehavior.GoBack:
+                        changeScreen(screenHistoryStack.Pop(), false);
                         break;
-                    case ScreenType.InGameMenu:
-                        // TODO: show overlay screen.
-                        break;
-                    case ScreenType.Other:
-                        // TODO: go back to the last screen.
-                        break;
-                    default:
+                    case AutomatedBackButtonBehavior.None:
+                        // do nothing, because OnBackButtonPressed is used
                         break;
                 }
             }

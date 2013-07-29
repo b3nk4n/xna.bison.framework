@@ -10,8 +10,8 @@ namespace Bison.Framework.Screens
         /// </summary>
         /// <param name="game">The game instance.</param>
         /// <param name="graphicsDevice">The graphics device.</param>
-        /// <param name="screenFactory">The factory class to create the game screens.</param>
-        void Initialize(Game game, GraphicsDevice graphicsDevice, IScreenFactory screenFactory);
+        /// <param name="initialScreen">The initial screen.</param>
+        void Initialize(Game game, GraphicsDevice graphicsDevice, IScreen initialScreen);
 
         /// <summary>
         /// Updates the game component.

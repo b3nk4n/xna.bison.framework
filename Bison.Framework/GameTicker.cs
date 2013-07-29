@@ -28,6 +28,11 @@ namespace Bison.Framework
         /// </summary>
         private bool isActive;
 
+        /// <summary>
+        /// The game tickers random number generator.
+        /// </summary>
+        private static readonly Random Random = new Random();
+
         #endregion
 
         #region Constructors
@@ -68,6 +73,16 @@ namespace Bison.Framework
         public void Reset()
         {
             Reset(defaultTime);
+        }
+
+        /// <summary>
+        /// Resets the game timer randomly to the given range.
+        /// </summary>
+        /// <param name="minTime">The minimum reset time.</param>
+        /// <param name="maxTime">The maximum reset time.</param>
+        public void Reset(float minTime, float maxTime)
+        {
+            Reset(minTime + (float)Random.NextDouble() * (maxTime - minTime));
         }
 
         /// <summary>

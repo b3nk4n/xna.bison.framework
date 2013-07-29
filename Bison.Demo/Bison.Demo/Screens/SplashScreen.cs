@@ -16,9 +16,16 @@ namespace Bison.Demo.Screens
         SpriteFont font;
         GameTicker splashTimer = new GameTicker(3.0f);
 
-        public SplashScreen(ChangeScreenHandler changeScreen)
-            : base(changeScreen, ScreenType.Start)
+        public SplashScreen()
+            : base(AutomatedBackButtonBehavior.Close)
         {
+        }
+
+        public override void Activate()
+        {
+            base.Activate();
+
+            splashTimer.Reset();
         }
 
         public override void SetupInputs()
@@ -47,7 +54,7 @@ namespace Bison.Demo.Screens
 
             if (splashTimer.Elapsed)
             {
-                ChangeScreen("DemoScreen");
+                ScreenManager.ChangeScreen(new GameScreen());
             }
         }
 

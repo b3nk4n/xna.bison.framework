@@ -20,15 +20,15 @@ namespace Bison.Demo.Screens
         Cow rotatedCow;
         Cow scaledCow;
 
-        public GameScreen(ChangeScreenHandler changeScreen)
-            : base(changeScreen, ScreenType.InGame)
+        public GameScreen()
+            : base(AutomatedBackButtonBehavior.GoBack)
         {
 
         }
 
         public override void SetupInputs()
         {
-            inputManager.AddTouchTapInput(
+            InputManager.AddTouchTapInput(
                 SCREEN_TAP,
                 ScreenManager.Instance.Viewport,
                 true);
@@ -36,10 +36,11 @@ namespace Bison.Demo.Screens
 
         public override void HandleInputs()
         {
-            if (inputManager.IsPressed(SCREEN_TAP))
+            if (InputManager.IsPressed(SCREEN_TAP))
             {
                 cow.PlayAnimation("cow4");
                 outlinedText.DisplayText = "Test1234";
+                ScreenManager.AddScreen(new InMenuScreen());
             }
         }
 
