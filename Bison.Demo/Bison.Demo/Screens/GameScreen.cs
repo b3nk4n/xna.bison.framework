@@ -14,7 +14,7 @@ namespace Bison.Demo.Screens
     class GameScreen : Screen
     {
         private const string SCREEN_TAP = "tap";
-        Text outlinedText;
+        TextDisplay outlinedText;
         
         Cow cow;
         Cow rotatedCow;
@@ -39,7 +39,7 @@ namespace Bison.Demo.Screens
             if (InputManager.IsPressed(SCREEN_TAP))
             {
                 cow.PlayAnimation("cow4");
-                outlinedText.DisplayText = "Test1234";
+                outlinedText.Text = "Test1234";
                 ScreenManager.AddScreen(new InMenuScreen());
             }
         }
@@ -48,7 +48,7 @@ namespace Bison.Demo.Screens
         {
             base.LoadContent(content);
 
-            outlinedText = new Text(
+            outlinedText = new TextDisplay(
                 Content.Load<SpriteFont>(@"Fonts/TestFont"),
                 "SampleText",
                 new Vector2(25, 25),
