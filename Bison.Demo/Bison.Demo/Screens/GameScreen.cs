@@ -14,7 +14,7 @@ namespace Bison.Demo.Screens
     class GameScreen : Screen
     {
         private const string SCREEN_TAP = "tap";
-        TextDisplay outlinedText;
+        Number number;
         
         Cow cow;
         Cow rotatedCow;
@@ -39,7 +39,6 @@ namespace Bison.Demo.Screens
             if (InputManager.IsPressed(SCREEN_TAP))
             {
                 cow.PlayAnimation("cow4");
-                outlinedText.Text = "Test1234";
                 ScreenManager.AddScreen(new InMenuScreen());
             }
         }
@@ -48,20 +47,23 @@ namespace Bison.Demo.Screens
         {
             base.LoadContent(content);
 
-            outlinedText = new TextDisplay(
+            number = new Number(
                 Content.Load<SpriteFont>(@"Fonts/TestFont"),
-                "SampleText",
-                new Vector2(25, 25),
-                Color.Black,
+                12345,
+                new Rectangle(400, 240, 400, 240),
+                TextControl.HorizontalAligments.Left,
+                TextControl.VerticalAligments.Bottom,
                 Color.White,
-                5);
+                Color.Red,
+                2);
+            number.MinDigits = 10;
 
             cow = new Cow(
                 Content.Load<Texture2D>(@"Textures/cowSheet1"),
                 Content.Load<Texture2D>(@"Textures/cowSheet2"),
                 Content.Load<Texture2D>(@"Textures/cowSheet3"),
                 Content.Load<Texture2D>(@"Textures/cowSheet4"));
-            cow.Location = new Vector2(100, 200);
+            cow.Location = new Vector2(0, 0);
             cow.PlayAnimation("cow1");
 
             rotatedCow = new Cow(
@@ -91,12 +93,12 @@ namespace Bison.Demo.Screens
             rotatedCow.Rotation = (float)gameTime.TotalGameTime.TotalSeconds;
             rotatedCow.Update(gameTime);
 
-            outlinedText.OutlineWidth = 3 + (int)(Math.Sin(gameTime.TotalGameTime.TotalSeconds) * 3);
+            number.OutlineWidth = 3 + (int)(Math.Sin(gameTime.TotalGameTime.TotalSeconds) * 3);
         }
 
         protected override void DrawScreen(SpriteBatch batch)
         {
-            outlinedText.Draw(batch);
+            number.Draw(batch);
 
             cow.Draw(batch);
             rotatedCow.Draw(batch);

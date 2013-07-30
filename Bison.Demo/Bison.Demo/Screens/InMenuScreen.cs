@@ -8,7 +8,7 @@ namespace Bison.Demo.Screens
 {
     class InMenuScreen : Screen
     {
-        TextDisplay pauseTitle;
+        Text pauseTitle;
           
 
         public InMenuScreen()
@@ -20,7 +20,7 @@ namespace Bison.Demo.Screens
         {
             base.LoadContent(content);
 
-            pauseTitle = new TextDisplay(
+            pauseTitle = new Text(
                 Content.Load<SpriteFont>(@"Fonts/TestFont"),
                 "P A U S E",
                 new Vector2(400, 240),

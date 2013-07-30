@@ -9,7 +9,7 @@ namespace Bison.Framework.Controls
 {
     public class ImageEffect
     {
-        protected Image image;
+        protected OldImage image;
         public bool IsActive = false;
 
         public ImageEffect()
@@ -17,7 +17,7 @@ namespace Bison.Framework.Controls
 
         }
 
-        public virtual void LoadContent(ref Image image)
+        public virtual void LoadContent(ref OldImage image)
         {
             this.image = image;
         }

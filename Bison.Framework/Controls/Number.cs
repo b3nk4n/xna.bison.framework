@@ -11,14 +11,14 @@ namespace Bison.Framework.Controls
     /// <summary>
     /// Display control to show Int32 numbers.
     /// </summary>
-    public class NumberDisplay : ContentDisplay
+    public class Number : TextControl
     {
         #region Members
 
         /// <summary>
         /// The display number.
         /// </summary>
-        private int number;
+        private int displayNumber;
 
         /// <summary>
         /// 
@@ -35,7 +35,7 @@ namespace Bison.Framework.Controls
         /// <param name="font">The sprite font.</param>
         /// <param name="number">The display number.</param>
         /// <param name="location">The number location.</param>
-        public NumberDisplay(SpriteFont font, int number, Vector2 location)
+        public Number(SpriteFont font, int number, Vector2 location)
             : this(font, number, location, Color.White, Color.Transparent, 0)
         {
         }
@@ -48,7 +48,7 @@ namespace Bison.Framework.Controls
         /// <param name="location">The number location.</param>
         /// <param name="color">The number color.</param>
         /// <param name="outlineColor">The number outline color.</param>
-        public NumberDisplay(SpriteFont font, int number, Vector2 location,
+        public Number(SpriteFont font, int number, Vector2 location,
             Color color, Color outlineColor)
             : this(font, number, location, color, outlineColor, 1)
         {
@@ -63,11 +63,11 @@ namespace Bison.Framework.Controls
         /// <param name="color">The number color.</param>
         /// <param name="outlineColor">The number outline color.</param>
         /// <param name="outlineWidth">The number outline width.</param>
-        public NumberDisplay(SpriteFont font, int number, Vector2 location,
+        public Number(SpriteFont font, int number, Vector2 location,
             Color color, Color outlineColor, int outlineWidth)
             : base(font, location, color, outlineColor, outlineWidth)
         {
-            Number = number;
+            DisplayNumber = number;
         }
 
         /// <summary>
@@ -81,11 +81,11 @@ namespace Bison.Framework.Controls
         /// <param name="color">The number color.</param>
         /// <param name="outlineColor">The number outline color.</param>
         /// <param name="outlineWidth">The number outline width.</param>
-        public NumberDisplay(SpriteFont font, int number, Vector2 location, HorizontalAligments horizontalAlignment, VerticalAligments verticalAlignment,
+        public Number(SpriteFont font, int number, Vector2 location, HorizontalAligments horizontalAlignment, VerticalAligments verticalAlignment,
             Color color, Color outlineColor, int outlineWidth)
             : base(font, location, horizontalAlignment, verticalAlignment, color, outlineColor, outlineWidth)
         {
-            Number = number;
+            DisplayNumber = number;
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace Bison.Framework.Controls
         /// <param name="verticalAlignment">The vertical number alignment.</param>
         /// <param name="color">The number color.</param>
         /// <param name="outlineColor">The number outline color.</param>
-        public NumberDisplay(SpriteFont font, int number, Rectangle displayArea, HorizontalAligments horizontalAlignment, VerticalAligments verticalAlignment,
+        public Number(SpriteFont font, int number, Rectangle displayArea, HorizontalAligments horizontalAlignment, VerticalAligments verticalAlignment,
             Color color, Color outlineColor)
             : this(font, number, displayArea, horizontalAlignment, verticalAlignment, color, outlineColor, 1)
         {
@@ -115,11 +115,11 @@ namespace Bison.Framework.Controls
         /// <param name="color">The number color.</param>
         /// <param name="outlineColor">The number outline color.</param>
         /// <param name="outlineWidth">The number outline width.</param>
-        public NumberDisplay(SpriteFont font, int number, Rectangle displayArea, HorizontalAligments horizontalAlignment, VerticalAligments verticalAlignment,
+        public Number(SpriteFont font, int number, Rectangle displayArea, HorizontalAligments horizontalAlignment, VerticalAligments verticalAlignment,
             Color color, Color outlineColor, int outlineWidth)
             : base(font, displayArea, horizontalAlignment, verticalAlignment, color, outlineColor, outlineWidth)
         {
-            Number = number;
+            DisplayNumber = number;
         }
 
         #endregion
@@ -136,7 +136,7 @@ namespace Bison.Framework.Controls
         {
             batch.DrawInt32(
                     Font,
-                    number,
+                    displayNumber,
                     location,
                     color,
                     this.minDigits);
@@ -148,7 +148,7 @@ namespace Bison.Framework.Controls
         /// <returns>The content dimensions.</returns>
         protected override Vector2 MeasureContent()
         {
-            return Font.MeasureString(number.ToString("D" + this.minDigits));
+            return Font.MeasureString(displayNumber.ToString("D" + this.minDigits));
         }
 
         #endregion
@@ -158,17 +158,17 @@ namespace Bison.Framework.Controls
         /// <summary>
         /// Gets or sets the display number.
         /// </summary>
-        public int Number
+        public int DisplayNumber
         {
             get
             {
-                return this.number;
+                return this.displayNumber;
             }
             set
             {
-                if (this.number != value)
+                if (this.displayNumber != value)
                 {
-                    this.number = value;
+                    this.displayNumber = value;
                     this.UpdateContent();
                 }
             }

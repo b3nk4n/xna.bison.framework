@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Bison.Framework.Controls
 {
-    public abstract class ContentDisplay : IGameDrawable
+    public abstract class TextControl : IGameDrawable
     {
         #region Members
 
@@ -98,7 +98,7 @@ namespace Bison.Framework.Controls
         /// <param name="color">The content color.</param>
         /// <param name="outlineColor">The content outline color.</param>
         /// <param name="outlineWidth">The content outline width.</param>
-        public ContentDisplay(SpriteFont font, Vector2 location, Color color, Color outlineColor,
+        public TextControl(SpriteFont font, Vector2 location, Color color, Color outlineColor,
             int outlineWidth)
             : this(font, new Rectangle((int)location.X, (int)location.Y, 0, 0), HorizontalAligments.Left, VerticalAligments.Top, color, outlineColor, outlineWidth)
         {
@@ -114,7 +114,7 @@ namespace Bison.Framework.Controls
         /// <param name="color">The content color.</param>
         /// <param name="outlineColor">The content outline color.</param>
         /// <param name="outlineWidth">The content outline width.</param>
-        public ContentDisplay(SpriteFont font, Vector2 location, HorizontalAligments horizontalAlignment, VerticalAligments verticalAlignment, Color color, Color outlineColor,
+        public TextControl(SpriteFont font, Vector2 location, HorizontalAligments horizontalAlignment, VerticalAligments verticalAlignment, Color color, Color outlineColor,
             int outlineWidth)
             : this(font, new Rectangle((int)location.X, (int)location.Y, 0, 0), horizontalAlignment, verticalAlignment, color, outlineColor, outlineWidth)
         {
@@ -127,7 +127,7 @@ namespace Bison.Framework.Controls
         /// <param name="color">The content color.</param>
         /// <param name="outlineColor">The content outline color.</param>
         /// <param name="outlineWidth">The content outline width.</param>
-        public ContentDisplay(SpriteFont font, Rectangle displayArea, Color color, Color outlineColor,
+        public TextControl(SpriteFont font, Rectangle displayArea, Color color, Color outlineColor,
             int outlineWidth)
             : this(font, displayArea, HorizontalAligments.Left, VerticalAligments.Top, color, outlineColor, outlineWidth)
         {
@@ -142,7 +142,7 @@ namespace Bison.Framework.Controls
         /// <param name="color">The content color.</param>
         /// <param name="outlineColor">The content outline color.</param>
         /// <param name="outlineWidth">The content outline width.</param>
-        public ContentDisplay(SpriteFont font, Rectangle displayArea, HorizontalAligments horizontalAlignment, VerticalAligments verticalAlignment, Color color, Color outlineColor, 
+        public TextControl(SpriteFont font, Rectangle displayArea, HorizontalAligments horizontalAlignment, VerticalAligments verticalAlignment, Color color, Color outlineColor, 
             int outlineWidth)
         {
             this.font = font;

@@ -1,6 +1,4 @@
-using Bison.Framework.Screens;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -9,115 +7,196 @@ using System.Text;
 
 namespace Bison.Framework.Controls
 {
-    public class Image
+    /// <summary>
+    /// Class representing an image.
+    /// </summary>
+    public class Image : IGameDrawable
     {
-        /*public float Opacity;
-        public Vector2 Position;
-        public Vector2 Scale;
-        public Rectangle SourceRect;
+        #region Members
 
-        public Texture2D Texture;
-        private Vector2 origion;
+        /// <summary>
+        /// The image texture.
+        /// </summary>
+        private Texture2D texture;
 
-        public RenderTarget2D renderTarget;
+        /// <summary>
+        /// The image location.
+        /// </summary>
+        private Vector2 location;
 
-        public bool IsActive;
+        /// <summary>
+        /// Indicates whether the image is visible or not.
+        /// </summary>
+        private bool isVisible;
 
-        /*private Dictionary<string, ImageEffect> effectList = new Dictionary<string,ImageEffect>();
+        /// <summary>
+        /// The image scale.
+        /// </summary>
+        private Vector2 scale;
 
-        public void AddEffect(string effectName, ImageEffect effect)
+        /// <summary>
+        /// The image rotation.
+        /// </summary>
+        private float rotation;
+
+        /// <summary>
+        /// The image source.
+        /// </summary>
+        private Rectangle source;
+
+        /// <summary>
+        /// The image tint color.
+        /// </summary>
+        private Color tintColor;
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Creates an image instance.
+        /// </summary>
+        /// <param name="texture">The texture.</param>
+        /// <param name="location">The image location.</param>
+        public Image(Texture2D texture, Vector2 location)
+            : this(texture, location, texture.Bounds)
         {
-            effect.IsActive = true;
-            var obj = this;
-            effect.LoadContent(ref obj);
-            effectList.Add(effectName, effect);
-            ActivateEffect(effectName);
         }
 
-        public void ActivateEffect(string effect)
+        /// <summary>
+        /// Creates an image instance.
+        /// </summary>
+        /// <param name="texture">The texture.</param>
+        /// <param name="location">THe image location.</param>
+        /// <param name="source">The image source.</param>
+        public Image(Texture2D texture, Vector2 location, Rectangle source)
         {
-            if (effectList.ContainsKey(effect))
-            {
-                effectList[effect].IsActive = true;
-                var obj = this;
-                effectList[effect].LoadContent(ref obj);
-            }
+            this.texture = texture;
+            this.location = location;
+            this.source = source;
+
+            this.scale = Vector2.One;
+            this.tintColor = Color.White;
+            this.isVisible = true;
         }
 
-        public void DeactivateEffect(string effect)
-        {
-            if (effectList.ContainsKey(effect))
-            {
-                effectList[effect].IsActive = false;
-                effectList[effect].UnloadContent();
-            }
-        }
+        #endregion
 
-        public Image(Texture2D texture)
-        {
-            Position = Vector2.Zero;
-            Scale = Vector2.One;
-            Opacity = 1.0f;
-            SourceRect = Rectangle.Empty;
-            IsActive = true;
-            this.Texture = texture;
-            
+        #region Methods
 
-            Vector2 dimensions = Vector2.Zero;
-
-            if (texture != null)
-            {
-                dimensions.X += Texture.Width;
-                dimensions.Y = Math.Max(Texture.Height, font.MeasureString(Text).Y);
-            }
-            else
-            {
-                dimensions.Y = font.MeasureString(Text).Y;
-            }
-            dimensions.X += font.MeasureString(Text).X;
-
-            if (SourceRect == Rectangle.Empty)
-            {
-                SourceRect = new Rectangle(0, 0, (int)dimensions.X, (int)dimensions.Y);
-            }
-
-            renderTarget = new RenderTarget2D(
-                ScreenManager.Instance.GraphicsDevice,
-                (int)dimensions.X,
-                (int)dimensions.Y);
-
-            ScreenManager.Instance.GraphicsDevice.SetRenderTarget(renderTarget);
-            ScreenManager.Instance.GraphicsDevice.Clear(Color.Transparent);
-            ScreenManager.Instance.SpriteBatch.Begin();
-            if (Texture != null)
-            {
-                ScreenManager.Instance.SpriteBatch.Draw(Texture, Vector2.Zero, Color.White);
-            }
-            ScreenManager.Instance.SpriteBatch.DrawString(font, Text, Vector2.Zero, Color.White);
-            ScreenManager.Instance.SpriteBatch.End();
-
-            Texture = renderTarget;
-
-            ScreenManager.Instance.GraphicsDevice.SetRenderTarget(null);
-        }
-
-        public void Update(GameTime gameTime)
-        {
-            /*foreach (var effect in effectList.Values)
-            {
-                if (effect.IsActive)
-                {
-                    effect.Update(gameTime);
-                }
-            }
-        }
-
+        /// <summary>
+        /// Renders the image.
+        /// </summary>
+        /// <param name="batch">The sprite batch.</param>
         public void Draw(SpriteBatch batch)
         {
-            origion = new Vector2(SourceRect.Width / 2,
-                SourceRect.Height / 2);
-            batch.Draw(Texture, Position, SourceRect, Color.White * Opacity,
-                0.0f, origion, Scale, SpriteEffects.None, 0.0f);
-        }*/
+            if (isVisible)
+            {
+                batch.Draw(
+                    texture,
+                    Center,
+                    source,
+                    tintColor,
+                    rotation,
+                    new Vector2(source.Width / 2, source.Height / 2),
+                    scale,
+                    SpriteEffects.None,
+                    1.0f);
+            }
+        }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets or sets the location in world coordinates.
+        /// </summary>
+        public Vector2 Location
+        {
+            get
+            {
+                return this.location;
+            }
+            set
+            {
+                this.location = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the center in world coordinates.
+        /// </summary>
+        public Vector2 Center
+        {
+            get
+            {
+                return new Vector2(
+                    (int)location.X + (int)(source.Width / 2),
+                    (int)location.Y + (int)(source.Height / 2));
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets whether the image is visible or not.
+        /// </summary>
+        public bool IsVisible
+        {
+            get
+            {
+                return this.isVisible;
+            }
+            set
+            {
+                this.isVisible = true;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the scale.
+        /// </summary>
+        public Vector2 Scale
+        {
+            get
+            {
+                return this.scale;
+            }
+            set
+            {
+                this.scale = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the rotation.
+        /// </summary>
+        public float Rotation
+        {
+            get
+            {
+                return this.rotation;
+            }
+            set
+            {
+                this.rotation = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the tint color.
+        /// </summary>
+        public Color TintColor
+        {
+            get
+            {
+                return this.tintColor;
+            }
+            set
+            {
+                this.tintColor = value;
+            }
+        }
+
+        #endregion
     }
 }

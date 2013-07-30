@@ -70,12 +70,13 @@
     <Compile Include="Audio\AudioSong.cs" />
     <Compile Include="BisonGame.cs" />
     <Compile Include="Camera.cs" />
-    <Compile Include="Controls\ContentDisplay.cs" />
-    <Compile Include="Controls\FadeEffect.cs" />
     <Compile Include="Controls\Image.cs" />
+    <Compile Include="Controls\TextControl.cs" />
+    <Compile Include="Controls\FadeEffect.cs" />
+    <Compile Include="Controls\OldImage.cs" />
     <Compile Include="Controls\ImageEffect.cs" />
-    <Compile Include="Controls\NumberDisplay.cs" />
-    <Compile Include="Controls\TextDisplay.cs" />
+    <Compile Include="Controls\Number.cs" />
+    <Compile Include="Controls\Text.cs" />
     <Compile Include="Extensions\SpriteBatchExtensions.cs" />
     <Compile Include="GameObject.cs" />
     <Compile Include="GameTicker.cs" />

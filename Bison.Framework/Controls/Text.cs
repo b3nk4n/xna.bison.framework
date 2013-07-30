@@ -10,14 +10,14 @@ namespace Bison.Framework.Controls
     /// <summary>
     /// Display control to show some text.
     /// </summary>
-    public class TextDisplay : ContentDisplay
+    public class Text : TextControl
     {
         #region Members
 
         /// <summary>
         /// The display text.
         /// </summary>
-        private string text;
+        private string displayText;
 
         #endregion
 
@@ -29,7 +29,7 @@ namespace Bison.Framework.Controls
         /// <param name="font">The sprite font.</param>
         /// <param name="text">The display text.</param>
         /// <param name="location">The text location.</param>
-        public TextDisplay(SpriteFont font, string text, Vector2 location)
+        public Text(SpriteFont font, string text, Vector2 location)
             : this(font, text, location, Color.White, Color.Transparent, 0)
         {
         }
@@ -42,7 +42,7 @@ namespace Bison.Framework.Controls
         /// <param name="location">The text location.</param>
         /// <param name="color">The text color.</param>
         /// <param name="outlineColor">The text outline color.</param>
-        public TextDisplay(SpriteFont font, string text, Vector2 location,
+        public Text(SpriteFont font, string text, Vector2 location,
             Color color, Color outlineColor)
             : this(font, text, location, color, outlineColor, 1)
         {
@@ -57,11 +57,11 @@ namespace Bison.Framework.Controls
         /// <param name="color">The text color.</param>
         /// <param name="outlineColor">The text outline color.</param>
         /// <param name="outlineWidth">The text outline width.</param>
-        public TextDisplay(SpriteFont font, string text, Vector2 location,
+        public Text(SpriteFont font, string text, Vector2 location,
             Color color, Color outlineColor, int outlineWidth)
             : base(font, location, color, outlineColor, outlineWidth)
         {
-            Text = text;
+            DisplayText = text;
         }
 
         /// <summary>
@@ -75,11 +75,11 @@ namespace Bison.Framework.Controls
         /// <param name="color">The text color.</param>
         /// <param name="outlineColor">The text outline color.</param>
         /// <param name="outlineWidth">The text outline width.</param>
-        public TextDisplay(SpriteFont font, string text, Vector2 location, HorizontalAligments horizontalAlignment, VerticalAligments verticalAlignment,
+        public Text(SpriteFont font, string text, Vector2 location, HorizontalAligments horizontalAlignment, VerticalAligments verticalAlignment,
             Color color, Color outlineColor, int outlineWidth)
             : base(font, location, horizontalAlignment, verticalAlignment, color, outlineColor, outlineWidth)
         {
-            Text = text;
+            DisplayText = text;
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace Bison.Framework.Controls
         /// <param name="verticalAlignment">The vertical text alignment.</param>
         /// <param name="color">The text color.</param>
         /// <param name="outlineColor">The text outline color.</param>
-        public TextDisplay(SpriteFont font, string text, Rectangle displayArea, HorizontalAligments horizontalAlignment, VerticalAligments verticalAlignment,
+        public Text(SpriteFont font, string text, Rectangle displayArea, HorizontalAligments horizontalAlignment, VerticalAligments verticalAlignment,
             Color color, Color outlineColor)
             : this(font, text, displayArea, horizontalAlignment, verticalAlignment, color, outlineColor, 1)
         {
@@ -109,11 +109,11 @@ namespace Bison.Framework.Controls
         /// <param name="color">The text color.</param>
         /// <param name="outlineColor">The text outline color.</param>
         /// <param name="outlineWidth">The text outline width.</param>
-        public TextDisplay(SpriteFont font, string text, Rectangle displayArea, HorizontalAligments horizontalAlignment, VerticalAligments verticalAlignment,
+        public Text(SpriteFont font, string text, Rectangle displayArea, HorizontalAligments horizontalAlignment, VerticalAligments verticalAlignment,
             Color color, Color outlineColor, int outlineWidth)
             : base(font, displayArea, horizontalAlignment, verticalAlignment, color, outlineColor, outlineWidth)
         {
-            Text = text;
+            DisplayText = text;
         }
 
         #endregion
@@ -130,7 +130,7 @@ namespace Bison.Framework.Controls
         {
             batch.DrawString(
                     Font,
-                    text,
+                    displayText,
                     location,
                     color);
         }
@@ -141,7 +141,7 @@ namespace Bison.Framework.Controls
         /// <returns>The content dimensions.</returns>
         protected override Vector2 MeasureContent()
         {
-            return Font.MeasureString(this.text);
+            return Font.MeasureString(this.displayText);
         }
 
         #endregion
@@ -151,17 +151,17 @@ namespace Bison.Framework.Controls
         /// <summary>
         /// Gets or sets the display text.
         /// </summary>
-        public string Text
+        public string DisplayText
         {
             get
             {
-                return this.text;
+                return this.displayText;
             }
             set
             {
-                if (this.text != value)
+                if (this.displayText != value)
                 {
-                    this.text = value;
+                    this.displayText = value;
                     this.UpdateContent();
                 }
             }

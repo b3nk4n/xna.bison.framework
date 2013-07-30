@@ -13,8 +13,7 @@ namespace Bison.Demo.Screens
 {
     public class SplashScreen : Screen
     {
-        TextDisplay title;
-        NumberDisplay number;
+        Image bisonLogo;
         GameTicker splashTimer = new GameTicker(3.0f);
 
         public SplashScreen()
@@ -34,33 +33,16 @@ namespace Bison.Demo.Screens
         }
 
         public override void HandleInputs()
-        {        
+        {
         }
 
         public override void LoadContent(ContentManager content)
         {
             base.LoadContent(content);
 
-            title = new TextDisplay(
-                Content.Load<SpriteFont>(@"Fonts/TestFont"),
-                "SplashScreen",
-                new Vector2(400, 240),
-                ContentDisplay.HorizontalAligments.Center,
-                ContentDisplay.VerticalAligments.Center,
-                Color.Red,
-                Color.RoyalBlue,
-                2);
-
-            number = new NumberDisplay(
-                Content.Load<SpriteFont>(@"Fonts/TestFont"),
-                12345,
-                new Rectangle(400, 240, 400, 240),
-                ContentDisplay.HorizontalAligments.Left,
-                ContentDisplay.VerticalAligments.Bottom,
-                Color.White,
-                Color.Red,
-                2);
-            number.MinDigits = 10;
+            bisonLogo = new Image(
+                Content.Load<Texture2D>(@"Textures/BisonSplashscreen"),
+                new Vector2(200, 165));
         }
 
         public override void UnloadContent()
@@ -80,8 +62,7 @@ namespace Bison.Demo.Screens
 
         protected override void DrawScreen(SpriteBatch batch)
         {
-            title.Draw(batch);
-            number.Draw(batch);
+            bisonLogo.Draw(batch);
         }
     }
 }
