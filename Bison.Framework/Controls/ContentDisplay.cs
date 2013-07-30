@@ -12,25 +12,29 @@ namespace Bison.Framework.Controls
         #region Members
 
         /// <summary>
-        /// The supported content alignments.
+        /// The supported horizontal content alignments.
         /// </summary>
-        public enum Aligment
+        public enum HorizontalAligments
         {
-            None,
-            Horizontal,
-            Vertical,
-            Both
+            Left,
+            Center,
+            Right,
+        }
+
+        /// <summary>
+        /// The supported vertical content alignments.
+        /// </summary>
+        public enum VerticalAligments
+        {
+            Top,
+            Center,
+            Bottom,
         }
 
         /// <summary>
         /// The sqrt(2) constant to improve performance.
         /// </summary>
         protected const float SQRT2 = 0.707167812f;
-
-        /// <summary>
-        /// The content location.
-        /// </summary>
-        private Vector2 location;
 
         /// <summary>
         /// The content color.
@@ -48,9 +52,19 @@ namespace Bison.Framework.Controls
         private Vector2 contentSize;
 
         /// <summary>
-        /// The current content aligment.
+        /// The current horizontal content aligment.
         /// </summary>
-        private Aligment alignment;
+        private HorizontalAligments horizontalAlignment;
+
+        /// <summary>
+        /// The current vertical content aligment.
+        /// </summary>
+        private VerticalAligments verticalAlignment;
+
+        /// <summary>
+        /// The render location of the content.
+        /// </summary>
+        private Vector2 location;
 
         /// <summary>
         /// The display area rectangle.
@@ -75,26 +89,68 @@ namespace Bison.Framework.Controls
         #endregion
 
         #region Constructors
-        
+
         /// <summary>
         /// Creates a new content display instance.
         /// </summary>
         /// <param name="font">The sprite font.</param>
-        /// <param name="location">The text location.</param>
-        /// <param name="color">The text color.</param>
-        /// <param name="outlineColor">The text outline color.</param>
-        /// <param name="outlineWidth">The text outline width.</param>
-        /// <param name="alignment">The text alignment.</param>
-        /// <param name="displayArea">The text display area</param>
-        public ContentDisplay(SpriteFont font, Vector2 location, Color color, Color outlineColor, 
-            int outlineWidth, Aligment alignment, Rectangle displayArea)
+        /// <param name="location">The content display location.</param>
+        /// <param name="color">The content color.</param>
+        /// <param name="outlineColor">The content outline color.</param>
+        /// <param name="outlineWidth">The content outline width.</param>
+        public ContentDisplay(SpriteFont font, Vector2 location, Color color, Color outlineColor,
+            int outlineWidth)
+            : this(font, new Rectangle((int)location.X, (int)location.Y, 0, 0), HorizontalAligments.Left, VerticalAligments.Top, color, outlineColor, outlineWidth)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new content display instance.
+        /// </summary>
+        /// <param name="font">The sprite font.</param>
+        /// <param name="location">The content display location.</param>
+        /// <param name="horizontalAlignment">The horizontal content alignment.</param>
+        /// <param name="verticalAlignment">The vertical content alignment.</param>
+        /// <param name="color">The content color.</param>
+        /// <param name="outlineColor">The content outline color.</param>
+        /// <param name="outlineWidth">The content outline width.</param>
+        public ContentDisplay(SpriteFont font, Vector2 location, HorizontalAligments horizontalAlignment, VerticalAligments verticalAlignment, Color color, Color outlineColor,
+            int outlineWidth)
+            : this(font, new Rectangle((int)location.X, (int)location.Y, 0, 0), horizontalAlignment, verticalAlignment, color, outlineColor, outlineWidth)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new content display instance.
+        /// </summary>
+        /// <param name="font">The sprite font.</param>
+        /// <param name="color">The content color.</param>
+        /// <param name="outlineColor">The content outline color.</param>
+        /// <param name="outlineWidth">The content outline width.</param>
+        public ContentDisplay(SpriteFont font, Rectangle displayArea, Color color, Color outlineColor,
+            int outlineWidth)
+            : this(font, displayArea, HorizontalAligments.Left, VerticalAligments.Top, color, outlineColor, outlineWidth)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new content display instance.
+        /// </summary>
+        /// <param name="font">The sprite font.</param>
+        /// <param name="displayArea">The content display area.</param>
+        /// <param name="horizontalAlignment">The horizontal content alignment.</param>
+        /// <param name="color">The content color.</param>
+        /// <param name="outlineColor">The content outline color.</param>
+        /// <param name="outlineWidth">The content outline width.</param>
+        public ContentDisplay(SpriteFont font, Rectangle displayArea, HorizontalAligments horizontalAlignment, VerticalAligments verticalAlignment, Color color, Color outlineColor, 
+            int outlineWidth)
         {
             this.font = font;
-            this.location = location;
             this.color = color;
             this.outlineColor = outlineColor;
             this.outlineWidth = outlineWidth;
-            this.alignment = alignment;
+            this.horizontalAlignment = horizontalAlignment;
+            this.verticalAlignment = verticalAlignment;
             this.displayArea = displayArea;
 
             this.isVisible = true;
@@ -116,20 +172,20 @@ namespace Bison.Framework.Controls
                 if (IsOutlined)
                 {
                     // horizontal / verical
-                    drawContent(batch, location + new Vector2(0, OutlineWidth), outlineColor);
-                    drawContent(batch, location + new Vector2(0, -OutlineWidth), outlineColor);
-                    drawContent(batch, location + new Vector2(OutlineWidth, 0), outlineColor);
-                    drawContent(batch, location + new Vector2(-OutlineWidth, 0), outlineColor);
+                    DrawContent(batch, location + new Vector2(0, OutlineWidth), outlineColor);
+                    DrawContent(batch, location + new Vector2(0, -OutlineWidth), outlineColor);
+                    DrawContent(batch, location + new Vector2(OutlineWidth, 0), outlineColor);
+                    DrawContent(batch, location + new Vector2(-OutlineWidth, 0), outlineColor);
 
                     // diagonal
                     float diagonalOutlineWidth = OutlineWidth * SQRT2;
-                    drawContent(batch, location + new Vector2(diagonalOutlineWidth, diagonalOutlineWidth), outlineColor);
-                    drawContent(batch, location + new Vector2(-diagonalOutlineWidth, diagonalOutlineWidth), outlineColor);
-                    drawContent(batch, location + new Vector2(diagonalOutlineWidth, -diagonalOutlineWidth), outlineColor);
-                    drawContent(batch, location + new Vector2(-diagonalOutlineWidth, -diagonalOutlineWidth), outlineColor);
+                    DrawContent(batch, location + new Vector2(diagonalOutlineWidth, diagonalOutlineWidth), outlineColor);
+                    DrawContent(batch, location + new Vector2(-diagonalOutlineWidth, diagonalOutlineWidth), outlineColor);
+                    DrawContent(batch, location + new Vector2(diagonalOutlineWidth, -diagonalOutlineWidth), outlineColor);
+                    DrawContent(batch, location + new Vector2(-diagonalOutlineWidth, -diagonalOutlineWidth), outlineColor);
                 }
 
-                drawContent(batch, location, color);
+                DrawContent(batch, location, color);
             }
         }
 
@@ -139,14 +195,14 @@ namespace Bison.Framework.Controls
         /// <param name="batch">The sprite batch.</param>
         /// <param name="location">The content location.</param>
         /// <param name="color">The content color.</param>
-        protected abstract void drawContent(SpriteBatch batch, Vector2 location, Color color);
+        protected abstract void DrawContent(SpriteBatch batch, Vector2 location, Color color);
 
         /// <summary>
         /// Updates the content and its position according the alignment.
         /// </summary>
-        protected void updateContent()
+        protected void UpdateContent()
         {
-            this.contentSize = measureContent();
+            this.contentSize = MeasureContent();
 
             this.updateAlignment();
         }
@@ -155,27 +211,51 @@ namespace Bison.Framework.Controls
         /// Mesures the content.
         /// </summary>
         /// <returns>The content dimensions.</returns>
-        protected abstract Vector2 measureContent();
+        protected abstract Vector2 MeasureContent();
 
         /// <summary>
         /// Updates the content position according the alignment.
         /// </summary>
         private void updateAlignment()
         {
-            switch (alignment)
+            updateHorizontalAlignment();
+            updateVerticalAlignment();
+        }
+
+        /// <summary>
+        /// Updates the content position according the horizontal alignment.
+        /// </summary>
+        private void updateHorizontalAlignment()
+        {
+            switch (horizontalAlignment)
             {
-                case Aligment.Horizontal:
-                    this.location.X = (int)((displayArea.Width / 2) - (contentSize.X / 2)) + displayArea.X;
+                case HorizontalAligments.Left:
+                    this.location.X = displayArea.X;
                     break;
-                case Aligment.Vertical:
-                    this.location.Y = (int)((displayArea.Height / 2) - (contentSize.Y / 2)) + displayArea.Y;
+                case HorizontalAligments.Center:
+                    this.location.X = displayArea.X + (int)((displayArea.Width / 2) - (contentSize.X / 2));
                     break;
-                case Aligment.Both:
-                    this.location.X = (int)((displayArea.Width / 2) - (contentSize.X / 2)) + displayArea.X;
-                    this.location.Y = (int)((displayArea.Height / 2) - (contentSize.Y / 2)) + displayArea.Y;
+                case HorizontalAligments.Right:
+                    this.location.X = displayArea.X + (int)(displayArea.Width - contentSize.X);
                     break;
-                case Aligment.None:
-                    // do nothing
+            }
+        }
+
+        /// <summary>
+        /// Updates the content position according the vertical alignment.
+        /// </summary>
+        private void updateVerticalAlignment()
+        {
+            switch (verticalAlignment)
+            {
+                case VerticalAligments.Top:
+                    this.location.Y = displayArea.Y;
+                    break;
+                case VerticalAligments.Center:
+                    this.location.Y = displayArea.Y + (int)((displayArea.Height / 2) - (contentSize.Y / 2));
+                    break;
+                case VerticalAligments.Bottom:
+                    this.location.Y = displayArea.Y + (int)(displayArea.Height - contentSize.Y);
                     break;
             }
         }
@@ -207,22 +287,6 @@ namespace Bison.Framework.Controls
             get
             {
                 return this.font;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the content location.
-        /// </summary>
-        public Vector2 Location
-        {
-            get
-            {
-                return this.location;
-            }
-            set
-            {
-                this.location = value;
-                this.updateAlignment();
             }
         }
 
@@ -272,18 +336,34 @@ namespace Bison.Framework.Controls
         }
 
         /// <summary>
-        /// Gets or sets the content alignment.
+        /// Gets or sets the content horizontal alignment.
         /// </summary>
-        public Aligment Alignment
+        public HorizontalAligments HorizontalAligment
         {
             get
             {
-                return this.alignment;
+                return this.horizontalAlignment;
             }
             set
             {
-                this.alignment = value;
-                this.updateAlignment();
+                this.horizontalAlignment = value;
+                this.updateHorizontalAlignment();
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the content vertical alignment.
+        /// </summary>
+        public VerticalAligments VerticalAlignment
+        {
+            get
+            {
+                return this.verticalAlignment;
+            }
+            set
+            {
+                this.verticalAlignment = value;
+                this.updateVerticalAlignment();
             }
         }
 

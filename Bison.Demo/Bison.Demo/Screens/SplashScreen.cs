@@ -44,22 +44,23 @@ namespace Bison.Demo.Screens
             title = new TextDisplay(
                 Content.Load<SpriteFont>(@"Fonts/TestFont"),
                 "SplashScreen",
-                new Vector2(0, 100),
-                Color.White,
+                new Vector2(400, 240),
+                ContentDisplay.HorizontalAligments.Center,
+                ContentDisplay.VerticalAligments.Center,
                 Color.Red,
-                2,
-                ContentDisplay.Aligment.Horizontal,
-                ScreenManager.Instance.Viewport);
+                Color.RoyalBlue,
+                2);
 
             number = new NumberDisplay(
                 Content.Load<SpriteFont>(@"Fonts/TestFont"),
-                123456789,
-                new Vector2(0, 100),
+                12345,
+                new Rectangle(400, 240, 400, 240),
+                ContentDisplay.HorizontalAligments.Left,
+                ContentDisplay.VerticalAligments.Bottom,
                 Color.White,
                 Color.Red,
-                2,
-                ContentDisplay.Aligment.Both,
-                ScreenManager.Instance.Viewport);
+                2);
+            number.MinDigits = 10;
         }
 
         public override void UnloadContent()

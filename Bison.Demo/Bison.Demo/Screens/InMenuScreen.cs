@@ -25,9 +25,7 @@ namespace Bison.Demo.Screens
                 "P A U S E",
                 new Vector2(400, 240),
                 Color.Green,
-                Color.Red,
-                TextDisplay.Aligment.Both,
-                Rectangle.Empty);
+                Color.Red);
         }
 
         public override void SetupInputs()

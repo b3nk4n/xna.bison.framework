@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Bison.Framework.Controls
 {
-    public class Image// : IGameObject
+    public class Image
     {
         /*public float Opacity;
         public Vector2 Position;
@@ -23,7 +23,7 @@ namespace Bison.Framework.Controls
 
         public bool IsActive;
 
-        private Dictionary<string, ImageEffect> effectList = new Dictionary<string,ImageEffect>();
+        /*private Dictionary<string, ImageEffect> effectList = new Dictionary<string,ImageEffect>();
 
         public void AddEffect(string effectName, ImageEffect effect)
         {
@@ -103,7 +103,7 @@ namespace Bison.Framework.Controls
 
         public void Update(GameTime gameTime)
         {
-            foreach (var effect in effectList.Values)
+            /*foreach (var effect in effectList.Values)
             {
                 if (effect.IsActive)
                 {
