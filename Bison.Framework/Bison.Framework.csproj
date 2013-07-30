@@ -70,6 +70,7 @@
     <Compile Include="Audio\AudioSong.cs" />
     <Compile Include="BisonGame.cs" />
     <Compile Include="Camera.cs" />
+    <Compile Include="Collections\SerializableDictionary.cs" />
     <Compile Include="Controls\Image.cs" />
     <Compile Include="Controls\TextControl.cs" />
     <Compile Include="Controls\FadeEffect.cs" />
@@ -90,6 +91,9 @@
     <Compile Include="Inputs\GestureDefinition.cs" />
     <Compile Include="Inputs\Input.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scoring\Score.cs" />
+    <Compile Include="Scoring\ScoreList.cs" />
+    <Compile Include="Scoring\ScoresManager.cs" />
     <Compile Include="Screens\Screen.cs" />
     <Compile Include="Screens\IScreen.cs" />
     <Compile Include="Screens\IScreenManager.cs" />

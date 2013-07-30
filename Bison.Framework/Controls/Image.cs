@@ -153,6 +153,28 @@ namespace Bison.Framework.Controls
         }
 
         /// <summary>
+        /// Gets the image width.
+        /// </summary>
+        public int Width
+        {
+            get
+            {
+                return this.source.Height;
+            }
+        }
+
+        /// <summary>
+        /// Gets the image heigth.
+        /// </summary>
+        public int Height
+        {
+            get
+            {
+                return this.source.Width;
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the scale.
         /// </summary>
         public Vector2 Scale
