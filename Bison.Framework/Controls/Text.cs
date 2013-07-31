@@ -73,6 +73,37 @@ namespace Bison.Framework.Controls
         /// <param name="horizontalAlignment">The horizontal text alignment.</param>
         /// <param name="verticalAlignment">The vertical text alignment.</param>
         /// <param name="color">The text color.</param>
+        public Text(SpriteFont font, string text, Vector2 location, HorizontalAligments horizontalAlignment, 
+            VerticalAligments verticalAlignment, Color color)
+            : this(font, text, location, horizontalAlignment, verticalAlignment, color, Color.Transparent, 1)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new text instance.
+        /// </summary>
+        /// <param name="font">The sprite font.</param>
+        /// <param name="text">The display text.</param>
+        /// <param name="location">The text display location.</param>
+        /// <param name="horizontalAlignment">The horizontal text alignment.</param>
+        /// <param name="verticalAlignment">The vertical text alignment.</param>
+        /// <param name="color">The text color.</param>
+        /// <param name="outlineColor">The text outline color.</param>
+        public Text(SpriteFont font, string text, Vector2 location, HorizontalAligments horizontalAlignment, VerticalAligments verticalAlignment,
+            Color color, Color outlineColor)
+            : this(font, text, location, horizontalAlignment, verticalAlignment, color, outlineColor, 1)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new text instance.
+        /// </summary>
+        /// <param name="font">The sprite font.</param>
+        /// <param name="text">The display text.</param>
+        /// <param name="location">The text display location.</param>
+        /// <param name="horizontalAlignment">The horizontal text alignment.</param>
+        /// <param name="verticalAlignment">The vertical text alignment.</param>
+        /// <param name="color">The text color.</param>
         /// <param name="outlineColor">The text outline color.</param>
         /// <param name="outlineWidth">The text outline width.</param>
         public Text(SpriteFont font, string text, Vector2 location, HorizontalAligments horizontalAlignment, VerticalAligments verticalAlignment,
@@ -80,6 +111,21 @@ namespace Bison.Framework.Controls
             : base(font, location, horizontalAlignment, verticalAlignment, color, outlineColor, outlineWidth)
         {
             DisplayText = text;
+        }
+
+        /// <summary>
+        /// Creates a new text instance.
+        /// </summary>
+        /// <param name="font">The sprite font.</param>
+        /// <param name="text">The display text.</param>
+        /// <param name="displayArea">The text display area</param>
+        /// <param name="horizontalAlignment">The horizontal text alignment.</param>
+        /// <param name="verticalAlignment">The vertical text alignment.</param>
+        /// <param name="color">The text color.</param>
+        public Text(SpriteFont font, string text, Rectangle displayArea, HorizontalAligments horizontalAlignment, VerticalAligments verticalAlignment,
+            Color color)
+            : this(font, text, displayArea, horizontalAlignment, verticalAlignment, color, Color.Transparent)
+        {
         }
 
         /// <summary>

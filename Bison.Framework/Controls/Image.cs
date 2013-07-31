@@ -159,7 +159,7 @@ namespace Bison.Framework.Controls
         {
             get
             {
-                return this.source.Height;
+                return this.source.Width;
             }
         }
 
@@ -170,7 +170,7 @@ namespace Bison.Framework.Controls
         {
             get
             {
-                return this.source.Width;
+                return this.source.Height;
             }
         }
 
@@ -216,6 +216,20 @@ namespace Bison.Framework.Controls
             set
             {
                 this.tintColor = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the bounding box in world coordinates.
+        /// </summary>
+        public Rectangle BoundingBox
+        {
+            get
+            {
+                return new Rectangle((int)(location.X),
+                                     (int)(location.Y),
+                                     Width,
+                                     Height);
             }
         }
 

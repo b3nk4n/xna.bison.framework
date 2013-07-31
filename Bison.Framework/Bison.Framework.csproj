@@ -71,6 +71,7 @@
     <Compile Include="BisonGame.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="Collections\SerializableDictionary.cs" />
+    <Compile Include="Controls\Button.cs" />
     <Compile Include="Controls\Image.cs" />
     <Compile Include="Controls\TextControl.cs" />
     <Compile Include="Controls\FadeEffect.cs" />
@@ -95,8 +96,6 @@
     <Compile Include="Scoring\ScoreList.cs" />
     <Compile Include="Scoring\ScoresManager.cs" />
     <Compile Include="Screens\Screen.cs" />
-    <Compile Include="Screens\IScreen.cs" />
-    <Compile Include="Screens\IScreenManager.cs" />
     <Compile Include="Screens\ScreenManager.cs" />
     <Compile Include="Settings\IAudioSettings.cs" />
     <Compile Include="Settings\IVibrationSettings.cs" />

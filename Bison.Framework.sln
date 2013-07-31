@@ -5,7 +5,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bison.Framework", "Bison.Fr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bison.Demo", "Bison.Demo\Bison.Demo\Bison.Demo.csproj", "{43D595B5-A0D9-45CE-BFC2-1A05D6417D4E}"
 EndProject
-Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "Bison.DemoContent", "Bison.Demo\Bison.DemoContent\Bison.DemoContent.contentproj", "{042A8C85-EB41-4460-978B-31C3B9CEE1ED}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bison.DemoContent", "Bison.Demo\Bison.DemoContent\Bison.DemoContent.contentproj", "{042A8C85-EB41-4460-978B-31C3B9CEE1ED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

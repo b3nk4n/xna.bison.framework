@@ -15,7 +15,7 @@ namespace Bison.Framework.Screens
     /// <summary>
     /// The game screen manager.
     /// </summary>
-    public class ScreenManager : IScreenManager
+    public class ScreenManager : IManagedContent
     {
         #region Members
 
@@ -47,17 +47,17 @@ namespace Bison.Framework.Screens
         /// <summary>
         /// The initial start screen of the game.
         /// </summary>
-        private IScreen initialScreen;
+        private Screen initialScreen;
 
         /// <summary>
         /// Stacks the overlapped game screens.
         /// </summary>
-        private Stack<IScreen> screenStack = new Stack<IScreen>();
+        private Stack<Screen> screenStack = new Stack<Screen>();
 
         /// <summary>
         /// Stacks the screen history.
         /// </summary>
-        private Stack<IScreen> screenHistoryStack = new Stack<IScreen>();
+        private Stack<Screen> screenHistoryStack = new Stack<Screen>();
 
         /// <summary>
         /// The dimension of all screens.
@@ -67,7 +67,7 @@ namespace Bison.Framework.Screens
         /// <summary>
         /// The game input manager.
         /// </summary>
-        private readonly InputManager inputManager = InputManager.Instance;
+        private readonly InputManager inputManager = new InputManager();
 
         #endregion
 
@@ -93,7 +93,7 @@ namespace Bison.Framework.Screens
         /// <param name="game">The game instance.</param>
         /// <param name="graphicsDevice">The graphics device.</param>
         /// <param name="initialScreen">The games initial screen.</param>
-        public void Initialize(Game game, GraphicsDevice graphicsDevice, IScreen initialScreen)
+        public void Initialize(Game game, GraphicsDevice graphicsDevice, Screen initialScreen)
         {
             this.game = game;
             this.graphicsDevice = graphicsDevice;
@@ -101,17 +101,6 @@ namespace Bison.Framework.Screens
             this.initialScreen = initialScreen;
 
             this.setupInputs();
-        }
-
-        /// <summary>
-        /// Sets up the back button input action.
-        /// </summary>
-        private void setupInputs()
-        {
-            inputManager.AddGamepadInput(
-                ActionBack,
-                Buttons.Back,
-                true);
         }
 
         /// <summary>
@@ -168,18 +157,53 @@ namespace Bison.Framework.Screens
         /// Changes the screen.
         /// </summary>
         /// <param name="screen">The screen to change to.</param>
-        public static void ChangeScreen(IScreen screen)
+        public static void ChangeScreen(Screen screen)
         {
-            instance.changeScreen(screen, true);
+            Instance.changeScreen(screen, true);
         }
 
         /// <summary>
         /// Adds the screen.
         /// </summary>
         /// <param name="screen">The screen to add to the screen stack.</param>
-        public static void AddScreen(IScreen screen)
+        public static void AddScreen(Screen screen)
         {
-            instance.addScreen(screen);
+            Instance.addScreen(screen);
+        }
+
+        /// <summary>
+        /// Goes back to the last screen by using the History.
+        /// </summary>
+        public static void GoBack()
+        {
+            Instance.changeScreen(
+                Instance.screenHistoryStack.Pop(),
+                false);
+        }
+
+        /// <summary>
+        /// Closes the top most screen and exits the game, if there is no more
+        /// active screen left. 
+        /// </summary>
+        public static void CloseScreen()
+        {
+            Instance.screenStack.Pop();
+
+            if (Instance.screenStack.Count == 0)
+            {
+                Instance.Game.Exit();
+            }
+        }
+
+        /// <summary>
+        /// Sets up the back button input action.
+        /// </summary>
+        private void setupInputs()
+        {
+            inputManager.AddGamepadInput(
+                ActionBack,
+                Buttons.Back,
+                true);
         }
 
         /// <summary>
@@ -187,11 +211,11 @@ namespace Bison.Framework.Screens
         /// </summary>
         /// <param name="screen">The screen to change to.</param>
         /// <param name="toHistory">Indicates whether the last screen should be added to the history.</param>
-        private void changeScreen(IScreen screen, bool toHistory)
+        private void changeScreen(Screen screen, bool toHistory)
         {
             screen.LoadContent(this.content);
 
-            IScreen lastScreen = screenStack.Pop();
+            var lastScreen = screenStack.Pop();
             lastScreen.UnloadContent();
 
             if (screen.AutomatedBackButtonBehavior == AutomatedBackButtonBehavior.GoBack)
@@ -211,7 +235,7 @@ namespace Bison.Framework.Screens
         /// Adds the screen.
         /// </summary>
         /// <param name="screen">The screen to add to the screen stack.</param>
-        private void addScreen(IScreen screen)
+        private void addScreen(Screen screen)
         {
             screen.LoadContent(this.content);
 
@@ -229,19 +253,13 @@ namespace Bison.Framework.Screens
                 switch (ActiveScreen.AutomatedBackButtonBehavior)
                 {
                     case AutomatedBackButtonBehavior.Close:
-                        screenStack.Pop();
-
-                        if (screenStack.Count == 0)
-                        {
-                            game.Exit();
-                        }
-
+                        CloseScreen();
                         break;
                     case AutomatedBackButtonBehavior.GoBack:
-                        changeScreen(screenHistoryStack.Pop(), false);
+                        GoBack();
                         break;
-                    case AutomatedBackButtonBehavior.None:
-                        // do nothing, because OnBackButtonPressed is used
+                    case AutomatedBackButtonBehavior.Manual:
+                        ActiveScreen.OnBackButtonPressed();
                         break;
                 }
             }
@@ -318,7 +336,7 @@ namespace Bison.Framework.Screens
         /// <summary>
         /// Gets the currently active and top most screen.
         /// </summary>
-        public IScreen ActiveScreen
+        public Screen ActiveScreen
         {
             get
             {

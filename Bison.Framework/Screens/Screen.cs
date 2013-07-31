@@ -12,10 +12,17 @@ using System.Xml.Serialization;
 
 namespace Bison.Framework.Screens
 {
+    public enum AutomatedBackButtonBehavior
+    {
+        Close,
+        GoBack,
+        Manual
+    }
+
     /// <summary>
     /// The game screens base class.
     /// </summary>
-    public abstract class Screen : IScreen
+    public abstract class Screen : IManagedContent, IGameUpdateable, IGameDrawable
     {
         #region Members
 
@@ -42,7 +49,7 @@ namespace Bison.Framework.Screens
         /// <summary>
         /// The game input manager.
         /// </summary>
-        protected readonly InputManager InputManager = InputManager.Instance;
+        protected readonly InputManager InputManager = new InputManager();
 
         /// <summary>
         /// Indicates wether the screen handles inputs.
@@ -77,6 +84,9 @@ namespace Bison.Framework.Screens
             this.automatedBackButtonBehavior = backButtonBehavior;
 
             SetupInputs();
+
+            this.isActive = true;
+            this.isVisible = true;
         }
 
         #endregion
@@ -103,12 +113,12 @@ namespace Bison.Framework.Screens
         /// <summary>
         /// Sets up the screen inputs.
         /// </summary>
-        public abstract void SetupInputs();
+        protected abstract void SetupInputs();
 
         /// <summary>
         /// Handles the user inputs.
         /// </summary>
-        public abstract void HandleInputs();
+        protected abstract void HandleInputs();
 
         /// <summary>
         /// Activates the screen.
@@ -126,15 +136,18 @@ namespace Bison.Framework.Screens
         {
             AudioManager.Update(gameTime);
 
-            // handle input if accepted
-            if (AcceptInputs)
+            if (isActive)
             {
-                HandleInputs();
-            }
+                // handle input if accepted
+                if (AcceptInputs)
+                {
+                    HandleInputs();
+                }
 #if DEBUG
-            // touchIndicator.Update(gameTime, content);
+                // touchIndicator.Update(gameTime, content);
 #endif
-            UpdateScreen(gameTime);
+                UpdateScreen(gameTime);
+            }
         }
 
         /// <summary>
@@ -143,13 +156,20 @@ namespace Bison.Framework.Screens
         /// <param name="batch">The sprite batch.</param>
         public void Draw(SpriteBatch batch)
         {
-            DrawScreen(batch);
+            if (isVisible)
+            {
+                DrawScreen(batch);
 
 #if DEBUG
-            // touchIndicator.Draw(batch, content);
+                // touchIndicator.Draw(batch, content);
 #endif
+            }
         }
 
+        /// <summary>
+        /// Handle function for manual back button handling. This function is called only
+        /// if the screens property AutomatedBackButtonBehavior.Manual is set.
+        /// </summary>
         public virtual void OnBackButtonPressed()
         {
         }

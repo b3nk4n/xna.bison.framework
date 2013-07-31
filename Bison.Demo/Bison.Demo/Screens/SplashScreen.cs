@@ -28,11 +28,11 @@ namespace Bison.Demo.Screens
             splashTimer.Reset();
         }
 
-        public override void SetupInputs()
+        protected override void SetupInputs()
         {
         }
 
-        public override void HandleInputs()
+        protected override void HandleInputs()
         {
         }
 
@@ -56,7 +56,7 @@ namespace Bison.Demo.Screens
 
             if (splashTimer.Elapsed)
             {
-                ScreenManager.ChangeScreen(new GameScreen());
+                ScreenManager.ChangeScreen(new MenuScreen());
             }
         }
 
