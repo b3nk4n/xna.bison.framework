@@ -3,12 +3,12 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Globalization;
 
-namespace Bison.Framework.Extensions
+namespace Bison.Framework
 {
     /// <summary>
     /// The sprite batch extensions to reduce the memory alocation for rendering numbers.
     /// </summary>
-    public static class SpriteBatchExtensions
+    public static class SpriteBatchNumberExtensions
     {
         /// <summary>
         /// The possible digits.

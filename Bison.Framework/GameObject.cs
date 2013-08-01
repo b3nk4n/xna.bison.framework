@@ -156,14 +156,8 @@ namespace Bison.Framework
         /// <returns>TRUE, if both collision circles are intersecting</returns>
         public bool IsCircleColliding(Vector2 otherCenter, float otherRadius)
         {
-            if (Vector2.Distance(this.Center, otherCenter) < this.CollisionRadius + otherRadius)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return Vector2.Distance(this.Center, otherCenter) < this.CollisionRadius + otherRadius;
+
         }
 
         /// <summary>
@@ -234,6 +228,17 @@ namespace Bison.Framework
                         flipped,
                         layerDepth);
                 }
+
+#if DEBUG
+                if (CollisionRadius > 0)
+                {
+                    batch.DrawCircle(
+                        Center,
+                        CollisionRadius);
+                }
+
+                batch.DrawRectangle(BoundingBox);
+#endif
             }
         }
 

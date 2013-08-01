@@ -186,6 +186,15 @@ namespace Bison.Framework.Controls
                 }
 
                 DrawContent(batch, location, color);
+
+#if DEBUG
+                if (displayArea != Rectangle.Empty)
+                {
+                    batch.DrawRectangle(displayArea);
+                }
+
+                batch.DrawRectangle(BoundingBox);
+#endif
             }
         }
 
