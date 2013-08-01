@@ -79,9 +79,11 @@
     <Compile Include="Controls\ImageEffect.cs" />
     <Compile Include="Controls\Number.cs" />
     <Compile Include="Controls\Text.cs" />
-    <Compile Include="Extensions\SpriteBatchExtensions.cs" />
+    <Compile Include="Extensions\SpriteBatchNumberExtensions.cs" />
+    <Compile Include="Extensions\SpriteBatchPrimitivesExtensions.cs" />
     <Compile Include="GameObject.cs" />
     <Compile Include="GameTicker.cs" />
+    <Compile Include="Graphics\Texture2DFactory.cs" />
     <Compile Include="IGameDrawable.cs" />
     <Compile Include="IGameUpdateable.cs" />
     <Compile Include="IManagedContent.cs" />

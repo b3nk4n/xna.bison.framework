@@ -215,8 +215,8 @@ namespace Bison.Framework.Screens
         {
             screen.LoadContent(this.content);
 
-            var lastScreen = screenStack.Pop();
-            lastScreen.UnloadContent();
+            var lastScreen = screenStack.Peek();
+            clearScreenStack();
 
             if (screen.AutomatedBackButtonBehavior == AutomatedBackButtonBehavior.GoBack)
             {
@@ -241,6 +241,15 @@ namespace Bison.Framework.Screens
 
             screenStack.Push(screen);
             screen.Activate();
+        }
+
+        private void clearScreenStack()
+        {
+            while (screenStack.Count > 0)
+            {
+                var screen = screenStack.Pop();
+                screen.UnloadContent();
+            }
         }
 
         /// <summary>

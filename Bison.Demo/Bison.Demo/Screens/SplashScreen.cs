@@ -63,6 +63,19 @@ namespace Bison.Demo.Screens
         protected override void DrawScreen(SpriteBatch batch)
         {
             bisonLogo.Draw(batch);
+
+            batch.DrawLine(new Vector2(0, 0), new Vector2(800, 480), Color.Red, 3.0f);
+            batch.DrawCircle(
+                new Vector2(100, 100),
+                90.0f,
+                Color.Red,
+                2);
+            batch.DrawNgon(
+                new Vector2(600, 100),
+                50,
+                8,
+                Color.Blue,
+                1);
         }
     }
 }

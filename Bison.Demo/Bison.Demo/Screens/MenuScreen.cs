@@ -1,4 +1,5 @@
 using Bison.Framework.Controls;
+using Bison.Framework.Graphics;
 using Bison.Framework.Screens;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -63,7 +64,7 @@ namespace Bison.Demo.Screens
                 new Vector2(200, 250));
 
             exitButton = new Button(
-                Content.Load<Texture2D>(@"Textures/Button"),
+                Texture2DFactory.Create(ScreenManager.Instance.Game.GraphicsDevice, 400, 80, Color.DarkBlue),
                 Content.Load<SpriteFont>(@"Fonts/TestFont"),
                 "Exit",
                 new Vector2(200, 350));

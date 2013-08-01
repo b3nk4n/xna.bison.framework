@@ -73,6 +73,7 @@ namespace Bison.Demo.Screens
             rotatedCow.Location = new Vector2(200, 200);
             rotatedCow.RotateToDirection(new Vector2(0, -1));
             rotatedCow.PlayAnimation("cow1");
+            rotatedCow.CollisionRadius = 28;
 
             scaledCow = new Cow(
                 Content.Load<Texture2D>(@"Textures/cowSheet1"),
