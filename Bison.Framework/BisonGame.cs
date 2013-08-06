@@ -10,12 +10,17 @@ using System.Text;
 
 namespace Bison.Framework
 {
+    /// <summary>
+    /// The Bison Frameworks game class.
+    /// </summary>
     public abstract class BisonGame : Game
     {
+        #region Members
+
         /// <summary>
         /// The graphics device manager.
         /// </summary>
-        protected GraphicsDeviceManager graphics;
+        protected static GraphicsDeviceManager graphics;
 
         /// <summary>
         /// The sprite batch to render.
@@ -26,6 +31,10 @@ namespace Bison.Framework
         /// The screen manager.
         /// </summary>
         protected ScreenManager screenManager = ScreenManager.Instance;
+
+        #endregion
+
+        #region Constructors
 
         /// <summary>
         /// Creates a new bison game instance running on 60 fps.
@@ -46,6 +55,10 @@ namespace Bison.Framework
             // Initialize phone services
             initializaPhoneServices();
         }
+
+        #endregion
+
+        #region Methods
 
         /// <summary>
         /// Prepares the graphics device settings by setting the frame rate to 60 fps.
@@ -205,5 +218,19 @@ namespace Bison.Framework
 
             base.Draw(gameTime);
         }
+
+        #endregion
+
+        #region Properties
+
+        public static GraphicsDeviceManager GraphicsDeviceManager
+        {
+            get
+            {
+                return graphics;
+            }
+        }
+
+        #endregion
     }
 }

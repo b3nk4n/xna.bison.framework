@@ -15,36 +15,39 @@ namespace Bison.Framework.Graphics
         /// <summary>
         /// Creates a 1x1 pixel white texture.
         /// </summary>
-        /// <param name="graphicsDevice">The graphics device.</param>
         /// <returns>The 1x1 pixel texure.</returns>
-        public static Texture2D Create(GraphicsDevice graphicsDevice)
+        public static Texture2D Create()
         {
-            return Create(graphicsDevice, 1, 1, Color.White);
+            return Create(
+                1,
+                1,
+                Color.White);
         }
 
         /// <summary>
         /// Creates a 1x1 pixel white texture.
         /// </summary>
-        /// <param name="graphicsDevice">The graphics device.</param>
         /// <param name="color">The texture color.</param>
         /// <returns>The 1x1 pixel texture.</returns>
-        public static Texture2D Create(GraphicsDevice graphicsDevice, Color color)
+        public static Texture2D Create(Color color)
         {
-            return Create(graphicsDevice, 1, 1, color);
+            return Create(
+                1,
+                1,
+                color);
         }
 
         /// <summary>
         /// Creates a NxM pixel texure.
         /// </summary>
-        /// <param name="graphicsDevice">The graphics device.</param>
         /// <param name="width">The texture width.</param>
         /// <param name="height">The texutre height.</param>
         /// <param name="color">The texture color.</param>
         /// <returns>The NxM pixel texture.</returns>
-        public static Texture2D Create(GraphicsDevice graphicsDevice, int width, int height, Color color)
+        public static Texture2D Create(int width, int height, Color color)
         {
             Texture2D texture = new Texture2D(
-                graphicsDevice,
+                BisonGame.GraphicsDeviceManager.GraphicsDevice,
                 width,
                 height,
                 false,

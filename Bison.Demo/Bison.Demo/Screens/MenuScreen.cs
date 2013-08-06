@@ -64,7 +64,7 @@ namespace Bison.Demo.Screens
                 new Vector2(200, 250));
 
             exitButton = new Button(
-                Texture2DFactory.Create(ScreenManager.Instance.Game.GraphicsDevice, 400, 80, Color.DarkBlue),
+                Texture2DFactory.Create(400, 80, Color.DarkBlue),
                 Content.Load<SpriteFont>(@"Fonts/TestFont"),
                 "Exit",
                 new Vector2(200, 350));
