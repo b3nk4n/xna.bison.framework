@@ -12,7 +12,6 @@ namespace Bison.Demo
         {
             screenManager.Initialize(
                 this,
-                this.GraphicsDevice,
                 new SplashScreen());
         }
     }

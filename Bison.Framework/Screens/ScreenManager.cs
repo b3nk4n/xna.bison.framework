@@ -40,11 +40,6 @@ namespace Bison.Framework.Screens
         private ContentManager content;
 
         /// <summary>
-        /// The games graphics device.
-        /// </summary>
-        private GraphicsDevice graphicsDevice;
-
-        /// <summary>
         /// The initial start screen of the game.
         /// </summary>
         private Screen initialScreen;
@@ -91,12 +86,10 @@ namespace Bison.Framework.Screens
         /// Initializes the screen manager with the used screen factory.
         /// </summary>
         /// <param name="game">The game instance.</param>
-        /// <param name="graphicsDevice">The graphics device.</param>
         /// <param name="initialScreen">The games initial screen.</param>
-        public void Initialize(Game game, GraphicsDevice graphicsDevice, Screen initialScreen)
+        public void Initialize(Game game, Screen initialScreen)
         {
             this.game = game;
-            this.graphicsDevice = graphicsDevice;
 
             this.initialScreen = initialScreen;
 
@@ -200,7 +193,7 @@ namespace Bison.Framework.Screens
         /// </summary>
         private void setupInputs()
         {
-            inputManager.AddGamepadInput(
+            inputManager.AddButtonInput(
                 ActionBack,
                 Buttons.Back,
                 true);
@@ -306,17 +299,6 @@ namespace Bison.Framework.Screens
         }
 
         /// <summary>
-        /// Gets the graphics device.
-        /// </summary>
-        public GraphicsDevice GraphicsDevice
-        {
-            get
-            {
-                return this.graphicsDevice;
-            }
-        }
-
-        /// <summary>
         /// Gets the dimension of any screen.
         /// </summary>
         public Vector2 ScreenDimension
@@ -338,7 +320,7 @@ namespace Bison.Framework.Screens
         {
             get
             {
-                return this.graphicsDevice.Viewport.Bounds;
+                return this.game.GraphicsDevice.Viewport.Bounds;
             }
         }
 

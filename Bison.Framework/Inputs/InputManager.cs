@@ -1,3 +1,4 @@
+using Microsoft.Phone.Applications.Common;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
@@ -5,15 +6,38 @@ using System.Collections.Generic;
 
 namespace Bison.Framework.Inputs
 {
+    /// <summary>
+    /// The game input manager class.
+    /// </summary>
     public class InputManager
     {
+        #region Members
+        /// <summary>
+        /// Collection of all defined inputs.
+        /// </summary>
         Dictionary<string, Input> inputs = new Dictionary<string, Input>();
 
+        #endregion
+
+        #region Constructores
+
+        /// <summary>
+        /// Creates a new input manager instance.
+        /// </summary>
         public InputManager()
         {
         }
 
-        public Input MyInput(string action)
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Gets or created a new input.
+        /// </summary>
+        /// <param name="action">The action name.</param>
+        /// <returns>The input with the given action name.</returns>
+        private Input getInput(string action)
         {
             // Add the action, if it doesn't already exist
             if (!inputs.ContainsKey(action))
@@ -24,37 +48,43 @@ namespace Bison.Framework.Inputs
             return inputs[action];
         }
 
+        /// <summary>
+        /// Begins the input update.
+        /// </summary>
         public void BeginUpdate()
         {
             Input.BeginUpdate();
         }
 
+        /// <summary>
+        /// Ends the input update.
+        /// </summary>
         public void EndUpdate()
         {
             Input.EndUpdate();
         }
 
-        public bool IsConnected(PlayerIndex player)
-        {
-            // If there was never a gamepad connected, fake the return value
-            if (!Input.GamepadConnectionState[player])
-            {
-                return true;
-            }
-
-            return Input.IsConnected(player);
-        }
-
-        public bool IsPressed(string action, Rectangle currentObjectLocation)
+        /// <summary>
+        /// Verifies whether the given action was pressed.
+        /// </summary>
+        /// <param name="action">The action name.</param>
+        /// <param name="newGestureDetectionLocation">The new gesture detection location.</param>
+        /// <returns>TRUE, if the action was pressed.</returns>
+        public bool IsPressed(string action, Rectangle? newGestureDetectionLocation)
         {
             if (!inputs.ContainsKey(action))
             {
                 return false;
             }
 
-            return inputs[action].IsPressed(PlayerIndex.One, currentObjectLocation);
+            return inputs[action].IsPressed(newGestureDetectionLocation);
         }
 
+        /// <summary>
+        /// Verifies whether the given action was pressed.
+        /// </summary>
+        /// <param name="action">The actin name.</param>
+        /// <returns>TRUE, if the action was pressed.</returns>
         public bool IsPressed(string action)
         {
             if (!inputs.ContainsKey(action))
@@ -62,131 +92,131 @@ namespace Bison.Framework.Inputs
                 return false;
             }
 
-            return inputs[action].IsPressed(PlayerIndex.One);
+            return inputs[action].IsPressed();
         }
 
-        public bool IsPressed(string action, PlayerIndex player)
+        /// <summary>
+        /// Adds a new button action.
+        /// </summary>
+        /// <param name="action">The action name.</param>
+        /// <param name="button">The button.</param>
+        /// <param name="isReleasedPreviously">Whether the button must be released previously to fire the action.</param>
+        public void AddButtonInput(string action, Buttons button, bool isReleasedPreviously)
         {
-            if (!inputs.ContainsKey(action))
-            {
-                return false;
-            }
-
-            return inputs[action].IsPressed(player);
-        }
-
-        public bool IsPressed(string action, PlayerIndex? player)
-        {
-            if (player == null)
-            {
-                PlayerIndex controllingPlayer;
-                return IsPressed(action, player, out controllingPlayer);
-            }
-
-            return IsPressed(action, player.Value);
-        }
-
-        public bool IsPressed(string action, PlayerIndex? player, out PlayerIndex controllingPlayer)
-        {
-            if (!inputs.ContainsKey(action))
-            {
-                controllingPlayer = PlayerIndex.One;
-                return false;
-            }
-
-            if (player == null)
-            {
-                if (IsPressed(action, PlayerIndex.One))
-                {
-                    controllingPlayer = PlayerIndex.One;
-                    return true;
-                }
-
-                if (IsPressed(action, PlayerIndex.Two))
-                {
-                    controllingPlayer = PlayerIndex.Two;
-                    return true;
-                }
-
-                if (IsPressed(action, PlayerIndex.Three))
-                {
-                    controllingPlayer = PlayerIndex.Three;
-                    return true;
-                }
-
-                if (IsPressed(action, PlayerIndex.Four))
-                {
-                    controllingPlayer = PlayerIndex.Four;
-                    return true;
-                }
-
-                controllingPlayer = PlayerIndex.One;
-                return true;
-            }
-
-            controllingPlayer = (PlayerIndex)player;
-            return IsPressed(action, controllingPlayer);
-        }
-
-        public void AddGamepadInput(string action, Buttons button, bool isReleasedPreviously)
-        {
-            MyInput(action).AddGamepadInput(button,
+            getInput(action).AddButtonInput(button,
                                             isReleasedPreviously);
         }
 
+        /// <summary>
+        /// Adds a new keyboard action.
+        /// </summary>
+        /// <param name="action">The action name.</param>
+        /// <param name="key">The keyboard key.</param>
+        /// <param name="isReleasedPreviously">Whether the key must be released previously to fire the action.</param>
         public void AddKeyboardInput(string action, Keys key, bool isReleasedPreviously)
         {
-            MyInput(action).AddKeyboardInput(key,
+            getInput(action).AddKeyboardInput(key,
                                              isReleasedPreviously);
         }
 
+        /// <summary>
+        /// Adds a new touch tap action.
+        /// </summary>
+        /// <param name="action">The action name.</param>
+        /// <param name="touchArea">The touch area.</param>
+        /// <param name="isReleasedPreviously">Whether the finger must be released previously to fire the action.</param>
         public void AddTouchTapInput(string action, Rectangle touchArea, bool isReleasedPreviously)
         {
-            MyInput(action).AddTouchTapInput(touchArea,
+            getInput(action).AddTouchTapInput(touchArea,
                                              isReleasedPreviously);
         }
 
-        public void AddTouchSlideInput(string action, Input.Direction direction, float slideDistance)
+        /// <summary>
+        /// Adds a new swipe action.
+        /// </summary>
+        /// <param name="action">The action name.</param>
+        /// <param name="direction">The slide direction.</param>
+        /// <param name="slideDistance">The slide distance to fire the action.</param>
+        public void AddSwipeInput(string action, InputDirection direction, float slideDistance)
         {
-            MyInput(action).AddTouchSlideInput(direction,
+            getInput(action).AddSwipeInput(direction,
                                                slideDistance);
         }
 
-        public void AddTouchGestureInput(string action, GestureType gesture, Rectangle area)
+        /// <summary>
+        /// Adds a touch gesture action.
+        /// </summary>
+        /// <param name="action">The action name.</param>
+        /// <param name="gesture">The touch gesture.</param>
+        /// <param name="gestureArea">The gesture area.</param>
+        public void AddTouchGestureInput(string action, GestureType gesture, Rectangle gestureArea)
         {
-            MyInput(action).AddTouchGestureInput(gesture,
-                                                 area);
+            getInput(action).AddTouchGestureInput(gesture,
+                                                 gestureArea);
         }
 
-        public void AddAccelerometerInput(string action, Input.Direction direction, float tiltThreshold)
+        /// <summary>
+        /// Adss an accelerometer input action.
+        /// </summary>
+        /// <param name="action">The action name.</param>
+        /// <param name="direction">The accelerometer tilt direction.</param>
+        /// <param name="tiltThreshold">The tilt threshold.</param>
+        public void AddAccelerometerInput(string action, InputDirection direction, float tiltThreshold, AccelerometerFilterType filterType)
         {
-            MyInput(action).AddAccelerometerInput(direction,
-                                                  tiltThreshold);
+            getInput(action).AddAccelerometerInput(
+                direction,
+                tiltThreshold,
+                filterType);
         }
 
+        /// <summary>
+        /// The gestures current position.
+        /// </summary>
+        /// <param name="action">The action name.</param>
+        /// <returns>The current gesture position.</returns>
         public Vector2 CurrentGesturePosition(string action)
         {
-            return MyInput(action).CurrentGesturePosition();
+            return getInput(action).CurrentGesturePosition();
         }
 
+        /// <summary>
+        /// The gestures current delta.
+        /// </summary>
+        /// <param name="action">The action name.</param>
+        /// <returns>The current gesture delta.</returns>
         public Vector2 CurrentGestureDelta(string action)
         {
-            return MyInput(action).CurrentGestureDelta();
+            return getInput(action).CurrentGestureDelta();
         }
 
+        /// <summary>
+        /// The gestures current second position.
+        /// </summary>
+        /// <param name="action">The action name.</param>
+        /// <returns>The current gestures second position.</returns>
         public Vector2 CurrentGesturePosition2(string action)
         {
-            return MyInput(action).CurrentGesturePosition2();
+            return getInput(action).CurrentGesturePosition2();
         }
 
+        /// <summary>
+        /// The gestures current second delta.
+        /// </summary>
+        /// <param name="action">The action name.</param>
+        /// <returns>The currend gestures second delta.</returns>
         public Vector2 CurrentGestureDelta2(string action)
         {
-            return MyInput(action).CurrentGestureDelta2();
+            return getInput(action).CurrentGestureDelta2();
         }
 
+        /// <summary>
+        /// Gets the current touch point.
+        /// </summary>
+        /// <param name="action">The action name.</param>
+        /// <returns>The current touch point.</returns>
         public Point CurrentTouchPoint(string action)
         {
-            Vector2? currentPosition = MyInput(action).CurrentTouchPosition();
+            Vector2? currentPosition = getInput(action).CurrentTouchPosition();
 
             if (currentPosition == null)
             {
@@ -197,9 +227,14 @@ namespace Bison.Framework.Inputs
                              (int)currentPosition.Value.Y);
         }
 
+        /// <summary>
+        /// Gets the current touch position.
+        /// </summary>
+        /// <param name="action">The action name.</param>
+        /// <returns>The current touch position.</returns>
         public Vector2 CurrentTouchPosition(string action)
         {
-            Vector2? currentPosition = MyInput(action).CurrentTouchPosition();
+            Vector2? currentPosition = getInput(action).CurrentTouchPosition();
 
             if (currentPosition == null)
             {
@@ -209,10 +244,15 @@ namespace Bison.Framework.Inputs
             return currentPosition.Value; // ??? does it work?
         }
 
+        /// <summary>
+        /// Gets the current gesture scale change of a pinch gesture.
+        /// </summary>
+        /// <param name="action">The action name.</param>
+        /// <returns>The current gesture scale change.</returns>
         public float CurrentGestureScaleChange(string action)
         {
             // if no Pinch esture is activated, return zero
-            if (!MyInput(action).PinchGestureAvailable)
+            if (!getInput(action).IsPinchGestureAvailable)
             {
                 return 0.0f;
             }
@@ -241,9 +281,31 @@ namespace Bison.Framework.Inputs
             return scaleChange;
         }
 
-        public Vector3 CurrentAccelerometerReading(string action)
+        /// <summary>
+        /// Gets the current accelerometer reading.
+        /// </summary>
+        /// <param name="filterType">The used filter type.</param>
+        /// <returns>The current accelerometer reading.</returns>
+        public Vector3 CurrentAccelerometerReading(AccelerometerFilterType filterType)
         {
-            return MyInput(action).CurrentAccelerometerReading;
+            return Input.CurrentAccelerometerReading(filterType);
         }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets the accelerometer.
+        /// </summary>
+        public static AccelerometerHelper Accelerometer
+        {
+            get
+            {
+                return Input.Accelerometer;
+            }
+        }
+
+        #endregion
     }
 }

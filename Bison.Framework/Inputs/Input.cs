@@ -1,80 +1,198 @@
 using Microsoft.Devices.Sensors;
+using Microsoft.Phone.Applications.Common;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Bison.Framework.Inputs
 {
+    /// <summary>
+    /// The accelerometer filter type.
+    /// </summary>
+    public enum AccelerometerFilterType
+    {
+        /// <summary>
+        /// Raw, unfiltered accelerometer data (acceleration vector in all 3 dimensions) coming directly from sensor.
+        /// This is required for updating rapidly reacting UI.
+        /// </summary>
+        Raw,
+        /// <summary>
+        /// Filtered and temporally averaged accelerometer data using an arithmetic mean of the last 25 "optimaly filtered" 
+        /// samples (see above), so over 500ms at 50Hz on each axis, to virtually eliminate most sensor noise. 
+        /// This provides a very stable reading but it has also a very high latency and cannot be used for rapidly reacting UI.
+        /// </summary>
+        Average,
+        /// <summary>
+        /// Filtered accelerometer data using a combination of a low-pass and threshold triggered high-pass on each axis to 
+        /// elimate the majority of the sensor low amplitude noise while trending very quickly to large offsets (not perfectly
+        /// smooth signal in that case), providing a very low latency. This is ideal for quickly reacting UI updates.
+        /// </summary>
+        OptimalyFiltered,
+        /// <summary>
+        /// Filtered accelerometer data using a 1 Hz first-order low-pass on each axis to elimate the main sensor noise
+        /// while providing a medium latency. This can be used for moderatly reacting UI updates requiring a very smooth signal.
+        /// </summary>
+        LowPassFiltered
+    }
+
+    /// <summary>
+    /// The directions for swipe or accelerometer inputs.
+    /// </summary>
+    public enum InputDirection
+    {
+        Up,
+        Down,
+        Left,
+        Right
+    }
+
+    /// <summary>
+    /// Represents any game input using keyboard, gamepad, touch screen or accelerometer.
+    /// </summary>
     public class Input
     {
-        Dictionary<Keys, bool> keyboardDefinedInputs = new Dictionary<Keys, bool>();
-        Dictionary<Buttons, bool> gamepadDefinedInputs = new Dictionary<Buttons, bool>();
-        Dictionary<Rectangle, bool> touchTapDefinedInputs = new Dictionary<Rectangle, bool>();
-        Dictionary<Direction, float> touchSlideDefinedInputs = new Dictionary<Direction, float>();
-        Dictionary<int, GestureDefinition> gestureDefinedInputs = new Dictionary<int, GestureDefinition>();
-        Dictionary<Direction, float> accelerometerDefinedInputs = new Dictionary<Direction, float>();
+        #region Members
 
-        public static Dictionary<PlayerIndex, GamePadState> CurrentGamePadState = new Dictionary<PlayerIndex, GamePadState>();
-        public static Dictionary<PlayerIndex, GamePadState> PreviousGamePadState = new Dictionary<PlayerIndex, GamePadState>();
+        /// <summary>
+        /// The defined keyboard inputs.
+        /// </summary>
+        private Dictionary<Keys, bool> keyboardDefinedInputs = new Dictionary<Keys, bool>();
+
+        /// <summary>
+        /// The defined button inputs.
+        /// </summary>
+        private Dictionary<Buttons, bool> buttonDefinedInputs = new Dictionary<Buttons, bool>();
+
+        /// <summary>
+        /// The defined touch tap inputs.
+        /// </summary>
+        private Dictionary<Rectangle, bool> touchTapDefinedInputs = new Dictionary<Rectangle, bool>();
+
+        /// <summary>
+        /// The defined swipe inputs.
+        /// </summary>
+        private Dictionary<InputDirection, float> swipeDefinedInputs = new Dictionary<InputDirection, float>();
+
+        /// <summary>
+        /// The defined gesture inputs.
+        /// </summary>
+        private Dictionary<int, GestureDefinition> gestureDefinedInputs = new Dictionary<int, GestureDefinition>();
+
+        /// <summary>
+        /// The defined accelerometer inputs.
+        /// </summary>
+        private Dictionary<InputDirection, KeyValuePair<float, AccelerometerFilterType>> accelerometerDefinedInputs = new Dictionary<InputDirection, KeyValuePair<float, AccelerometerFilterType>>();
+
+        /// <summary>
+        /// The current button state.
+        /// </summary>
+        public static GamePadState CurrentButtonState;
+
+        /// <summary>
+        /// The previous button state.
+        /// </summary>
+        public static GamePadState PreviousButtonState;
+        
+        /// <summary>
+        /// The current keyboard state.
+        /// </summary>
         public static KeyboardState CurrentKeyboardState;
+
+        /// <summary>
+        /// The previous keyboard state.
+        /// </summary>
         public static KeyboardState PreviousKeyboardState;
+
+        /// <summary>
+        /// The current touchscreen state.
+        /// </summary>
         public static TouchCollection CurrentTouchLocationState;
+
+        /// <summary>
+        /// The previous touchscreen state.
+        /// </summary>
         public static TouchCollection PreviousTouchLocationState;
-        public static Dictionary<PlayerIndex, bool> GamepadConnectionState = new Dictionary<PlayerIndex, bool>();
 
+        /// <summary>
+        /// The detected gestures.
+        /// </summary>
         private static List<GestureDefinition> detectedGestures = new List<GestureDefinition>();
-        private static Accelerometer accelerometerSensor;
-        private static Vector3 currentAccelerometerReading;
 
-        public enum Direction{
-            Up,
-            Down,
-            Left,
-            Right
-        }
+        /// <summary>
+        /// The accelerometer.
+        /// </summary>
+        private static AccelerometerHelper accelerometer;
 
-        public bool PinchGestureAvailable = false;
-        private static bool isAccelerometerStarted = false;
+        /// <summary>
+        /// The current raw accelerometer reading.
+        /// </summary>
+        private static Vector3 currentRawAccelerometerReading;
 
-        GestureDefinition currentGestureDefinition;
+        /// <summary>
+        /// The current average accelerometer reading.
+        /// </summary>
+        private static Vector3 currentAverageAccelerometerReading;
 
+        /// <summary>
+        /// The current optimaly filtered accelerometer reading.
+        /// </summary>
+        private static Vector3 currentOptimalyFilteredAccelerometerReading;
+
+        /// <summary>
+        /// The curent low pass filtered accelerometer reading.
+        /// </summary>
+        private static Vector3 currentLowPassFilteredAccelerometerReading;
+
+        /// <summary>
+        /// Indicates whether a pinch gesture is available.
+        /// </summary>
+        private bool isPinchGestureAvailable = false;
+
+        /// <summary>
+        /// The current gesture definition.
+        /// </summary>
+        private GestureDefinition currentGestureDefinition;
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Createa a new input instance.
+        /// </summary>
         public Input()
         {
-            if (CurrentGamePadState.Count == 0)
+            // check and setup gamepad connection
+            if (CurrentButtonState == null)
             {
-                CurrentGamePadState.Add(PlayerIndex.One, GamePad.GetState(PlayerIndex.One));
-                CurrentGamePadState.Add(PlayerIndex.Two, GamePad.GetState(PlayerIndex.Two));
-                CurrentGamePadState.Add(PlayerIndex.Three, GamePad.GetState(PlayerIndex.Three));
-                CurrentGamePadState.Add(PlayerIndex.Four, GamePad.GetState(PlayerIndex.Four));
-
-                PreviousGamePadState.Add(PlayerIndex.One, GamePad.GetState(PlayerIndex.One));
-                PreviousGamePadState.Add(PlayerIndex.Two, GamePad.GetState(PlayerIndex.Two));
-                PreviousGamePadState.Add(PlayerIndex.Three, GamePad.GetState(PlayerIndex.Three));
-                PreviousGamePadState.Add(PlayerIndex.Four, GamePad.GetState(PlayerIndex.Four));
-
-                GamepadConnectionState.Add(PlayerIndex.One, CurrentGamePadState[PlayerIndex.One].IsConnected);
-                GamepadConnectionState.Add(PlayerIndex.Two, CurrentGamePadState[PlayerIndex.Two].IsConnected);
-                GamepadConnectionState.Add(PlayerIndex.Three, CurrentGamePadState[PlayerIndex.Three].IsConnected);
-                GamepadConnectionState.Add(PlayerIndex.Four, CurrentGamePadState[PlayerIndex.Four].IsConnected);
+                CurrentButtonState = GamePad.GetState(PlayerIndex.One);
+                PreviousButtonState = GamePad.GetState(PlayerIndex.One);
             }
 
-            if (accelerometerSensor == null)
+            // setup accelerometer
+            if (accelerometer == null)
             {
-                accelerometerSensor = new Accelerometer();
-                accelerometerSensor.CurrentValueChanged += accelerometerSensor_CurrentValueChanged;
+                accelerometer = AccelerometerHelper.Instance;
+
+                accelerometer.CurrentValueChanged += accelerometerCurrentValueChanged;
             }
         }
 
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Begins the input update.
+        /// </summary>
         public static void BeginUpdate()
         {
-            CurrentGamePadState[PlayerIndex.One] = GamePad.GetState(PlayerIndex.One);
-            CurrentGamePadState[PlayerIndex.Two] = GamePad.GetState(PlayerIndex.Two);
-            CurrentGamePadState[PlayerIndex.Three] = GamePad.GetState(PlayerIndex.Three);
-            CurrentGamePadState[PlayerIndex.Four] = GamePad.GetState(PlayerIndex.Four);
+            CurrentButtonState = GamePad.GetState(PlayerIndex.One);
 
-            CurrentKeyboardState = Keyboard.GetState(PlayerIndex.One);
+            CurrentKeyboardState = Keyboard.GetState();
             CurrentTouchLocationState = TouchPanel.GetState();
 
             detectedGestures.Clear();
@@ -89,34 +207,37 @@ namespace Bison.Framework.Inputs
             }
         }
 
+        /// <summary>
+        /// Ends the input update by storing the previous inputs.
+        /// </summary>
         public static void EndUpdate()
         {
-            PreviousGamePadState[PlayerIndex.One] = CurrentGamePadState[PlayerIndex.One];
-            PreviousGamePadState[PlayerIndex.Two] = CurrentGamePadState[PlayerIndex.Two];
-            PreviousGamePadState[PlayerIndex.Three] = CurrentGamePadState[PlayerIndex.Three];
-            PreviousGamePadState[PlayerIndex.Four] = CurrentGamePadState[PlayerIndex.Four];
+            PreviousButtonState = CurrentButtonState;
 
             PreviousKeyboardState = CurrentKeyboardState;
             PreviousTouchLocationState = CurrentTouchLocationState;
         }
 
-        void accelerometerSensor_CurrentValueChanged(object sender, SensorReadingEventArgs<AccelerometerReading> e)
+        /// <summary>
+        /// Adds a new button input.
+        /// </summary>
+        /// <param name="button">The button.</param>
+        /// <param name="isReleasedPreviously">Whether the button must be released previously.</param>
+        public void AddButtonInput(Buttons button, bool isReleasedPreviously)
         {
-            currentAccelerometerReading.X = (float)e.SensorReading.Acceleration.X;
-            currentAccelerometerReading.Y = (float)e.SensorReading.Acceleration.Y;
-            currentAccelerometerReading.Z = (float)e.SensorReading.Acceleration.Z;
-        }
-
-        public void AddGamepadInput(Buttons button, bool isReleasedPreviously)
-        {
-            if (gamepadDefinedInputs.ContainsKey(button))
+            if (buttonDefinedInputs.ContainsKey(button))
             {
-                gamepadDefinedInputs[button] = isReleasedPreviously;
+                buttonDefinedInputs[button] = isReleasedPreviously;
                 return;
             }
-            gamepadDefinedInputs.Add(button, isReleasedPreviously);
+            buttonDefinedInputs.Add(button, isReleasedPreviously);
         }
 
+        /// <summary>
+        /// Adds a new keyboard input.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="isReleasedPreviously">Whether the button must be released previously.</param>
         public void AddKeyboardInput(Keys key, bool isReleasedPreviously)
         {
             if (keyboardDefinedInputs.ContainsKey(key))
@@ -127,6 +248,11 @@ namespace Bison.Framework.Inputs
             keyboardDefinedInputs.Add(key, isReleasedPreviously);
         }
 
+        /// <summary>
+        /// Adds a new touch tap input.
+        /// </summary>
+        /// <param name="touchArea">The touch area.</param>
+        /// <param name="isReleasedPreviously">Whether the button must be released previously.</param>
         public void AddTouchTapInput(Rectangle touchArea, bool isReleasedPreviously)
         {
             if (touchTapDefinedInputs.ContainsKey(touchArea))
@@ -137,82 +263,92 @@ namespace Bison.Framework.Inputs
             touchTapDefinedInputs.Add(touchArea, isReleasedPreviously);
         }
 
-        public void AddTouchSlideInput(Direction direction, float slideDistance)
+        /// <summary>
+        /// Adds a new swipe input.
+        /// </summary>
+        /// <param name="direction">The swipe directon.</param>
+        /// <param name="slideDistance">The slide distance.</param>
+        public void AddSwipeInput(InputDirection direction, float slideDistance)
         {
-            if (touchSlideDefinedInputs.ContainsKey(direction))
+            if (swipeDefinedInputs.ContainsKey(direction))
             {
-                touchSlideDefinedInputs[direction] = slideDistance;
+                swipeDefinedInputs[direction] = slideDistance;
                 return;
             }
-            touchSlideDefinedInputs.Add(direction, slideDistance);
+            swipeDefinedInputs.Add(direction, slideDistance);
         }
 
+        /// <summary>
+        /// Adds a new touch gesture input.
+        /// </summary>
+        /// <param name="gestureType">The gesture type.</param>
+        /// <param name="touchArea">The touch area.</param>
         public void AddTouchGestureInput(GestureType gestureType, Rectangle touchArea)
         {
+            // ensure the gesture is enabled
             TouchPanel.EnabledGestures = gestureType | TouchPanel.EnabledGestures;
 
             gestureDefinedInputs.Add(gestureDefinedInputs.Count, new GestureDefinition(gestureType, touchArea));
 
             if (gestureType == GestureType.Pinch)
             {
-                PinchGestureAvailable = true;
+                isPinchGestureAvailable = true;
             }
         }
 
-        public void AddAccelerometerInput(Direction direction, float tiltThreshold)
+        /// <summary>
+        /// Add an acceleromter input.
+        /// </summary>
+        /// <param name="direction">The tilt direction.</param>
+        /// <param name="tiltThreshold">The tilt threshold.</param>
+        /// <param name="filterType">The used filter type.</param>
+        public void AddAccelerometerInput(InputDirection direction, float tiltThreshold, AccelerometerFilterType filterType)
         {
-            if (!isAccelerometerStarted)
+            if (!accelerometer.Active)
             {
-                try
-                {
-                    accelerometerSensor.Start();
-                    isAccelerometerStarted = true;
-                }
-                catch (AccelerometerFailedException)
-                {
-                    isAccelerometerStarted = false;
-                }
+                accelerometer.Active = true;
             }
 
-            accelerometerDefinedInputs.Add(direction, tiltThreshold);
+            accelerometerDefinedInputs.Add(
+                direction,
+                new KeyValuePair<float, AccelerometerFilterType>(tiltThreshold, filterType));
         }
 
+        /// <summary>
+        /// Removes the accelerometer input.
+        /// </summary>
         public void RemoveAccelerometerInput()
         {
-            if (isAccelerometerStarted)
+            if (accelerometer.Active)
             {
-                try
-                {
-                    accelerometerSensor.Stop();
-                    isAccelerometerStarted = false;
-                }
-                catch (AccelerometerFailedException)
-                {
-                    // Sensor couldn't be stopped
-                }
+                accelerometer.Active = false;
             }
 
             accelerometerDefinedInputs.Clear();
         }
 
-        public static bool IsConnected(PlayerIndex player)
+        /// <summary>
+        /// Checks wheter an input is available.
+        /// </summary>
+        /// <returns>TRUE, if one of the defined inputs is pressed.</returns>
+        public bool IsPressed()
         {
-            return CurrentGamePadState[player].IsConnected;
+            return IsPressed(null);
         }
 
-        public bool IsPressed(PlayerIndex player)
-        {
-            return IsPressed(player, null);
-        }
-
-        public bool IsPressed(PlayerIndex player, Rectangle? currentObjectLocation)
+        /// <summary>
+        /// Checks wheter an input is available.
+        /// </summary>
+        /// <param name="newGestureDetectionArea">The new gesture detection area.</param>
+        /// <returns>TRUE, if one of the defined inputs is pressed.</returns>
+        public bool IsPressed(Rectangle? newGestureDetectionArea)
         {
             if (IsKeyboardInputPressed())
             {
                 return true;
             }
 
-            if (IsGamepadInputPressed(player))
+            if (IsButtonInputPressed())
             {
                 return true;
             }
@@ -222,12 +358,12 @@ namespace Bison.Framework.Inputs
                 return true;
             }
 
-            if (IsTouchSlideInputPressed())
+            if (IsSwipeInputPressed())
             {
                 return true;
             }
 
-            if (IsTouchGestureInputPressed(currentObjectLocation))
+            if (IsTouchGestureInputPressed(newGestureDetectionArea))
             {
                 return true;
             }
@@ -240,6 +376,139 @@ namespace Bison.Framework.Inputs
             return false;
         }
 
+        /// <summary>
+        /// Gets the current gesture position.
+        /// </summary>
+        /// <returns>The current gesture position.</returns>
+        public Vector2 CurrentGesturePosition()
+        {
+            if (currentGestureDefinition == null)
+            {
+                return Vector2.Zero;
+            }
+
+            return currentGestureDefinition.Position;
+        }
+
+        /// <summary>
+        /// Gets the current second gesture position.
+        /// </summary>
+        /// <returns>The current second gesture position.</returns>
+        public Vector2 CurrentGesturePosition2()
+        {
+            if (currentGestureDefinition == null)
+            {
+                return Vector2.Zero;
+            }
+
+            return currentGestureDefinition.Position2;
+        }
+
+        /// <summary>
+        /// Gets the current gesture delta.
+        /// </summary>
+        /// <returns>The current gesture delta.</returns>
+        public Vector2 CurrentGestureDelta()
+        {
+            if (currentGestureDefinition == null)
+            {
+                return Vector2.Zero;
+            }
+
+            return currentGestureDefinition.Delta;
+        }
+
+        /// <summary>
+        /// Gets the current second gesture delta.
+        /// </summary>
+        /// <returns>The current second gesture delta.</returns>
+        public Vector2 CurrentGestureDelta2()
+        {
+            if (currentGestureDefinition == null)
+            {
+                return Vector2.Zero;
+            }
+
+            return currentGestureDefinition.Delta2;
+        }
+
+        /// <summary>
+        /// Get the touch point for the current location. This doesn't use any
+        /// of the gesture information, but the actual touch point on the screen
+        /// </summary>
+        /// <returns>The current touch position or NULL.</returns>
+        public Vector2? CurrentTouchPosition()
+        {
+            foreach (TouchLocation location in CurrentTouchLocationState)
+            {
+                switch (location.State)
+                {
+                    case TouchLocationState.Pressed:
+                    case TouchLocationState.Moved:
+                        return location.Position;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Get the touch point for the previous location. This doesn't use any
+        /// of the gesture information, but the actual touch point on the screen
+        /// </summary>
+        /// <returns>The previous touch position or NULL.</returns>
+        public Vector2? PreviousTouchPosition()
+        {
+            foreach (TouchLocation location in PreviousTouchLocationState)
+            {
+                switch (location.State)
+                {
+                    case TouchLocationState.Pressed:
+                    case TouchLocationState.Moved:
+                        return location.Position;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Gets the current accelerometer reading.
+        /// </summary>
+        /// <param name="filterType">The used filter type.</param>
+        /// <returns>The current accelerometer reading.</returns>
+        public static Vector3 CurrentAccelerometerReading(AccelerometerFilterType filterType)
+        {
+            switch (filterType)
+            {
+                case AccelerometerFilterType.Average:
+                    return currentAverageAccelerometerReading;
+                case AccelerometerFilterType.OptimalyFiltered:
+                    return currentOptimalyFilteredAccelerometerReading;
+                case AccelerometerFilterType.LowPassFiltered:
+                    return currentLowPassFilteredAccelerometerReading;
+                default:
+                    return currentRawAccelerometerReading;
+            }
+        }
+
+        /// <summary>
+        /// The accelerometer sensor value changed handler.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The accelerometer reading event args.</param>
+        private static void accelerometerCurrentValueChanged(object sender, AccelerometerHelperReadingEventArgs e)
+        {
+            currentRawAccelerometerReading = e.RawAcceleration;
+            currentAverageAccelerometerReading = e.AverageAcceleration;
+            currentLowPassFilteredAccelerometerReading = e.LowPassFilteredAcceleration;
+            currentOptimalyFilteredAccelerometerReading = e.OptimalyFilteredAcceleration;
+        }
+
+        /// <summary>
+        /// Checks whether a defined key input was pressed.
+        /// </summary>
+        /// <returns>TRUE, if a defined key was pressed.</returns>
         private bool IsKeyboardInputPressed()
         {
             foreach (Keys key in keyboardDefinedInputs.Keys)
@@ -260,18 +529,22 @@ namespace Bison.Framework.Inputs
             return false;
         }
 
-        private bool IsGamepadInputPressed(PlayerIndex player)
+        /// <summary>
+        /// Checks whether a defined button input was pressed.
+        /// </summary>
+        /// <returns>TRUE, if a defined button was pressed.</returns>
+        private bool IsButtonInputPressed()
         {
-            foreach (Buttons button in gamepadDefinedInputs.Keys)
+            foreach (Buttons button in buttonDefinedInputs.Keys)
             {
-                if (gamepadDefinedInputs[button]
-                    && CurrentGamePadState[player].IsButtonDown(button)
-                    && !PreviousGamePadState[player].IsButtonDown(button))
+                if (buttonDefinedInputs[button]
+                    && CurrentButtonState.IsButtonDown(button)
+                    && !PreviousButtonState.IsButtonDown(button))
                 {
                     return true;
                 }
-                else if (!gamepadDefinedInputs[button]
-                         && CurrentGamePadState[player].IsButtonDown(button))
+                else if (!buttonDefinedInputs[button]
+                         && CurrentButtonState.IsButtonDown(button))
                 {
                     return true;
                 }
@@ -280,6 +553,10 @@ namespace Bison.Framework.Inputs
             return false;
         }
 
+        /// <summary>
+        /// Checks whether a defined key input was pressed.
+        /// </summary>
+        /// <returns>TRUE, if a defined touch tap was detected.</returns>
         private bool IsTouchTapInputPressed()
         {
             foreach (Rectangle touchArea in touchTapDefinedInputs.Keys)
@@ -300,51 +577,60 @@ namespace Bison.Framework.Inputs
             return false;
         }
 
-        private bool IsTouchSlideInputPressed()
+        /// <summary>
+        /// Checks whether a defined swipe input was pressed.
+        /// </summary>
+        /// <returns>TRUE, if a defined swipe gesture was detected.</returns>
+        private bool IsSwipeInputPressed()
         {
-            foreach (Direction slideDirection in touchSlideDefinedInputs.Keys)
+            foreach (InputDirection slideDirection in swipeDefinedInputs.Keys)
             {
                 if (CurrentTouchPosition() != null
                     && PreviousTouchPosition() != null)
                 {
                     switch (slideDirection)
                     {
-                        case Direction.Up:
+                        case InputDirection.Up:
                             if (CurrentTouchPosition().Value.Y
-                                + touchSlideDefinedInputs[slideDirection] < PreviousTouchPosition().Value.Y)
+                                + swipeDefinedInputs[slideDirection] < PreviousTouchPosition().Value.Y)
                             {
                                 return true;
                             }
                             break;
-                        case Direction.Down:
+                        case InputDirection.Down:
                             if (CurrentTouchPosition().Value.Y
-                                - touchSlideDefinedInputs[slideDirection] > PreviousTouchPosition().Value.Y)
+                                - swipeDefinedInputs[slideDirection] > PreviousTouchPosition().Value.Y)
                             {
                                 return true;
                             }
                             break;
-                        case Direction.Left:
+                        case InputDirection.Left:
                             if (CurrentTouchPosition().Value.X
-                                + touchSlideDefinedInputs[slideDirection] < PreviousTouchPosition().Value.X)
+                                + swipeDefinedInputs[slideDirection] < PreviousTouchPosition().Value.X)
                             {
                                 return true;
                             }
                             break;
-                        case Direction.Right:
+                        case InputDirection.Right:
                             if (CurrentTouchPosition().Value.X
-                                - touchSlideDefinedInputs[slideDirection] > PreviousTouchPosition().Value.X)
+                                - swipeDefinedInputs[slideDirection] > PreviousTouchPosition().Value.X)
                             {
                                 return true;
                             }
                             break;
                     }
-                }        
+                }
             }
 
             return false;
         }
 
-        private bool IsTouchGestureInputPressed(Rectangle? newDetectionLocation)
+        /// <summary>
+        /// Checks whether a defined touch gesture input was pressed.
+        /// </summary>
+        /// <param name="newGestureDetectionArea">The new gesture detection area.</param>
+        /// <returns></returns>
+        private bool IsTouchGestureInputPressed(Rectangle? newGestureDetectionArea)
         {
             // Clear the current gesture eacht to that there is always the most recent stored
             currentGestureDefinition = null;
@@ -364,16 +650,16 @@ namespace Bison.Framework.Inputs
                     {
                         // If a rectangle area to check against has been bassed in, use that one.
                         // Otherwise, use the one the Input was originally set up with
-                        Rectangle areaToCheck = userDefinedGesture.CollisionArea;
+                        Rectangle areaToCheck = userDefinedGesture.GestureArea;
 
-                        if (newDetectionLocation != null)
+                        if (newGestureDetectionArea != null)
                         {
-                            areaToCheck = newDetectionLocation.Value;
+                            areaToCheck = newGestureDetectionArea.Value;
                         }
 
                         // If the gesture detected was made in the area where user was interested in Input,
                         // then a gesture input is considered detected
-                        if (detectedGesture.CollisionArea.Intersects(areaToCheck))
+                        if (detectedGesture.GestureArea.Intersects(areaToCheck))
                         {
                             if (currentGestureDefinition == null)
                             {
@@ -402,35 +688,42 @@ namespace Bison.Framework.Inputs
             return false;
         }
 
+        /// <summary>
+        /// Checks whether a defined accelerometer input was pressed.
+        /// </summary>
+        /// <returns>TRUE, if a defined direction was detected.</returns>
         private bool IsAccelerometerInputPressed()
         {
-            foreach (KeyValuePair<Direction, float> input in accelerometerDefinedInputs)
+            foreach (KeyValuePair<InputDirection, KeyValuePair<float, AccelerometerFilterType>> input in accelerometerDefinedInputs)
             {
+                float tiltThreshold = input.Value.Key;
+                Vector3 currentAccelerometerReading = CurrentAccelerometerReading(input.Value.Value);
+
                 switch (input.Key)
                 {
-                    case Direction.Up:
-                        if (Math.Abs(currentAccelerometerReading.Y) > input.Value
+                    case InputDirection.Up:
+                        if (Math.Abs(currentAccelerometerReading.Y) > tiltThreshold
                             && currentAccelerometerReading.Y < 0)
                         {
                             return true;
                         }
                         break;
-                    case Direction.Down:
-                        if (Math.Abs(currentAccelerometerReading.Y) > input.Value
+                    case InputDirection.Down:
+                        if (Math.Abs(currentAccelerometerReading.Y) > tiltThreshold
                             && currentAccelerometerReading.Y > 0)
                         {
                             return true;
                         }
                         break;
-                    case Direction.Left:
-                        if (Math.Abs(currentAccelerometerReading.X) > input.Value
+                    case InputDirection.Left:
+                        if (Math.Abs(currentAccelerometerReading.X) > tiltThreshold
                             && currentAccelerometerReading.X < 0)
                         {
                             return true;
                         }
                         break;
-                    case Direction.Right:
-                        if (Math.Abs(currentAccelerometerReading.X) > input.Value
+                    case InputDirection.Right:
+                        if (Math.Abs(currentAccelerometerReading.X) > tiltThreshold
                             && currentAccelerometerReading.X > 0)
                         {
                             return true;
@@ -442,78 +735,35 @@ namespace Bison.Framework.Inputs
             return false;
         }
 
-        public Vector2 CurrentGesturePosition()
-        {
-            if (currentGestureDefinition == null)
-            {
-                return Vector2.Zero;
-            }
+        #endregion
 
-            return currentGestureDefinition.Position;
+        #region Properties
+
+        /// <summary>
+        /// Gets whether a pinch gesture is available or not.
+        /// </summary>
+        public bool IsPinchGestureAvailable
+        {
+            get
+            {
+                return this.isPinchGestureAvailable;
+            }
         }
 
-        public Vector2 CurrentGesturePosition2()
+        /// <summary>
+        /// Gets the accelerometer.
+        /// </summary>
+        public static AccelerometerHelper Accelerometer
         {
-            if (currentGestureDefinition == null)
+            get
             {
-                return Vector2.Zero;
+                return accelerometer;
             }
-
-            return currentGestureDefinition.Position2;
         }
 
-        public Vector2 CurrentGestureDelta()
-        {
-            if (currentGestureDefinition == null)
-            {
-                return Vector2.Zero;
-            }
-
-            return currentGestureDefinition.Delta;
-        }
-
-        public Vector2 CurrentGestureDelta2()
-        {
-            if (currentGestureDefinition == null)
-            {
-                return Vector2.Zero;
-            }
-
-            return currentGestureDefinition.Delta2;
-        }
-
-        // Get the touch point for the current location. This doesn't use any
-        // of the gesture information, but the actual touch point on the screen
-        public Vector2? CurrentTouchPosition()
-        {
-            foreach (TouchLocation location in CurrentTouchLocationState)
-            {
-                switch (location.State)
-                {
-                    case TouchLocationState.Pressed:
-                    case TouchLocationState.Moved:
-                        return location.Position;
-                }
-            }
-
-            return null;
-        }
-
-        public Vector2? PreviousTouchPosition()
-        {
-            foreach (TouchLocation location in PreviousTouchLocationState)
-            {
-                switch (location.State)
-                {
-                    case TouchLocationState.Pressed:
-                    case TouchLocationState.Moved:
-                        return location.Position;
-                }
-            }
-
-            return null;
-        }
-
+        /// <summary>
+        /// Gets the current touch rectangle sized 10x10 pixels.
+        /// </summary>
         private Rectangle CurrentTouchRectangle
         {
             get
@@ -532,12 +782,6 @@ namespace Bison.Framework.Inputs
             }
         }
 
-        public Vector3 CurrentAccelerometerReading
-        {
-            get
-            {
-                return currentAccelerometerReading;
-            }
-        }
+        #endregion
     }
 }
