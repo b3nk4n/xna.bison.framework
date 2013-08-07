@@ -89,6 +89,8 @@
     <Compile Include="IManagedContent.cs" />
     <Compile Include="Inputs\AccelerometerHelper\AccelerometerHelper.cs" />
     <Compile Include="Inputs\AccelerometerHelper\ApplicationSettingHelper.cs" />
+    <Compile Include="Inputs\Debug\TouchIndicator.cs" />
+    <Compile Include="Inputs\Debug\TouchIndicatorManager.cs" />
     <Compile Include="Inputs\InputManager.cs" />
     <Compile Include="Inputs\GestureDefinition.cs" />
     <Compile Include="Inputs\Input.cs" />

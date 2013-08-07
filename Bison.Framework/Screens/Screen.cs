@@ -143,9 +143,7 @@ namespace Bison.Framework.Screens
                 {
                     HandleInputs();
                 }
-#if DEBUG
-                // touchIndicator.Update(gameTime, content);
-#endif
+
                 UpdateScreen(gameTime);
             }
         }
@@ -159,10 +157,6 @@ namespace Bison.Framework.Screens
             if (isVisible)
             {
                 DrawScreen(batch);
-
-#if DEBUG
-                // touchIndicator.Draw(batch, content);
-#endif
             }
         }
 

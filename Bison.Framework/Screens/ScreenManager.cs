@@ -1,4 +1,5 @@
 using Bison.Framework.Inputs;
+using Bison.Framework.Inputs.Debug;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -64,6 +65,13 @@ namespace Bison.Framework.Screens
         /// </summary>
         private readonly InputManager inputManager = new InputManager();
 
+#if DEBUG
+        /// <summary>
+        /// The touch indicator manager for tocuh screen debugging.
+        /// </summary>
+        private readonly TouchIndicatorManager touchIndicatorManager = TouchIndicatorManager.Instance;
+#endif
+
         #endregion
 
         #region Constructors
@@ -127,6 +135,10 @@ namespace Bison.Framework.Screens
 
             this.handleBackButtonInput();
 
+#if DEBUG
+            touchIndicatorManager.Update(gameTime);
+#endif
+
             inputManager.EndUpdate();
         }
 
@@ -142,6 +154,10 @@ namespace Bison.Framework.Screens
             {
                 screen.Draw(batch);
             }
+
+#if DEBUG
+            touchIndicatorManager.Draw(batch);
+#endif
 
             batch.End();
         }
