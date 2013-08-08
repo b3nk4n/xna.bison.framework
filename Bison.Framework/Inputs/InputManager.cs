@@ -51,9 +51,10 @@ namespace Bison.Framework.Inputs
         /// <summary>
         /// Begins the input update.
         /// </summary>
-        public void BeginUpdate()
+        /// <param name="gameTime">The elapsed game time.</param>
+        public void BeginUpdate(GameTime gameTime)
         {
-            Input.BeginUpdate();
+            Input.BeginUpdate(gameTime);
         }
 
         /// <summary>

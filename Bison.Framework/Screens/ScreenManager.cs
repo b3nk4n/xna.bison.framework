@@ -1,11 +1,12 @@
 using Bison.Framework.Inputs;
-using Bison.Framework.Inputs.Debug;
+using Bison.Framework.Inputs.Debugging;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -129,7 +130,7 @@ namespace Bison.Framework.Screens
         /// <param name="gameTime">The elapsed game time.</param>
         public void Update(GameTime gameTime)
         {
-            inputManager.BeginUpdate();
+            inputManager.BeginUpdate(gameTime);
 
             ActiveScreen.Update(gameTime);
 
@@ -222,6 +223,8 @@ namespace Bison.Framework.Screens
         /// <param name="toHistory">Indicates whether the last screen should be added to the history.</param>
         private void changeScreen(Screen screen, bool toHistory)
         {
+            Debug.WriteLine("Changing screen to type: {0}", screen.GetType().Name);
+
             screen.LoadContent(this.content);
 
             var lastScreen = screenStack.Peek();
@@ -246,6 +249,8 @@ namespace Bison.Framework.Screens
         /// <param name="screen">The screen to add to the screen stack.</param>
         private void addScreen(Screen screen)
         {
+            Debug.WriteLine("Added screen of type: {0}", screen.GetType().Name);
+
             screen.LoadContent(this.content);
 
             screenStack.Push(screen);

@@ -3,10 +3,11 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input.Touch;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
-namespace Bison.Framework.Inputs.Debug
+namespace Bison.Framework.Inputs.Debugging
 {
     /// <summary>
     /// Manages a collection of touch indicators for touchscreen debugging.
@@ -60,6 +61,7 @@ namespace Bison.Framework.Inputs.Debug
 
                 if (!touchIdAleadyStored)
                 {
+                    Debug.WriteLine("New touch with ID {0} was detected at {1}", touch.Id, touch.Position);
                     touchIndicators.Add(new TouchIndicator(touch.Id));
                 }
             }

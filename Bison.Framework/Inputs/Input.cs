@@ -156,6 +156,13 @@ namespace Bison.Framework.Inputs
         /// </summary>
         private GestureDefinition currentGestureDefinition;
 
+#if DEBUG
+        /// <summary>
+        /// The accelerometer debug info timer to give feedback every second.
+        /// </summary>
+        private static GameTicker accelerometerDebugInfoTimer = new GameTicker(1.0f);
+#endif
+
         #endregion
 
         #region Constructors
@@ -188,7 +195,8 @@ namespace Bison.Framework.Inputs
         /// <summary>
         /// Begins the input update.
         /// </summary>
-        public static void BeginUpdate()
+        /// <param name="gameTime">The elapsed game time.</param>
+        public static void BeginUpdate(GameTime gameTime)
         {
             CurrentButtonState = GamePad.GetState(PlayerIndex.One);
 
@@ -203,8 +211,23 @@ namespace Bison.Framework.Inputs
                 {
                     GestureSample gesture = TouchPanel.ReadGesture();
                     detectedGestures.Add(new GestureDefinition(gesture));
+
+                    Debug.WriteLine("Gesture of type {0} was detected at {1}", gesture.GestureType, gesture.Position);
                 }
             }
+
+#if DEBUG
+            if (accelerometer.Active)
+            {
+                accelerometerDebugInfoTimer.Update(gameTime);
+
+                if (accelerometerDebugInfoTimer.Elapsed)
+                {
+                    Debug.WriteLine("Accelerometer RAW reading is {0}", currentRawAccelerometerReading);
+                    accelerometerDebugInfoTimer.Reset();
+                }
+            }
+#endif
         }
 
         /// <summary>

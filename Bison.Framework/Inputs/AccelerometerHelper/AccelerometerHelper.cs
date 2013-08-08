@@ -369,6 +369,18 @@ namespace Microsoft.Phone.Applications.Common
                     retval = true;
                 }
             }
+
+#if DEBUG
+            if (retval)
+            {
+                Debug.WriteLine("Calibration successful with new zero axis offset {0}", ZeroAccelerationCalibrationOffset);
+            }
+            else
+            {
+                Debug.WriteLine("Calibation failed");
+            }
+#endif
+
             return retval;
         }
 

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Bison.Framework.Inputs.Debug
+namespace Bison.Framework.Inputs.Debugging
 {
     /// <summary>
     /// Represents a visible touch position or gesture.
