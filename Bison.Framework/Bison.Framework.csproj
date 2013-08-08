@@ -70,6 +70,7 @@
     <Compile Include="Audio\AudioSong.cs" />
     <Compile Include="BisonGame.cs" />
     <Compile Include="Camera.cs" />
+    <Compile Include="Collections\ObjectPool.cs" />
     <Compile Include="Collections\SerializableDictionary.cs" />
     <Compile Include="Controls\Button.cs" />
     <Compile Include="Controls\Image.cs" />
