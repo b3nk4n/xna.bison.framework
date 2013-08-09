@@ -62,6 +62,9 @@
     <Reference Include="System.Xml.Serialization, Version=2.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Circle.cs" />
+    <Compile Include="Extensions\Vector2Extensions.cs" />
+    <Compile Include="MultiSprite.cs" />
     <Compile Include="AnimationStrip.cs" />
     <Compile Include="Animation\Animation.cs" />
     <Compile Include="Animation\FadeAnimation.cs" />
@@ -103,6 +106,7 @@
     <Compile Include="Screens\ScreenManager.cs" />
     <Compile Include="Settings\IAudioSettings.cs" />
     <Compile Include="Settings\IVibrationSettings.cs" />
+    <Compile Include="Sprite.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Effects\" />

@@ -10,6 +10,9 @@ namespace Bison.Framework
     /// <summary>
     /// Class which manages an animation strip for sprite animations.
     /// </summary>
+    /// <remarks>
+    /// Each animation strip just contains a single line with no unnecessary texture padding.
+    /// </remarks>
     public class AnimationStrip : IGameUpdateable
     {
         #region Members
@@ -55,14 +58,9 @@ namespace Bison.Framework
         private bool finishedPlaying;
 
         /// <summary>
-        /// The name of the animation.
-        /// </summary>
-        private string name;
-
-        /// <summary>
         /// The name of the next animation, which will be started when this animation is finished.
         /// </summary>
-        private string nextAnimation;
+        private string nextAnimationKey;
 
         /// <summary>
         /// Indicates whether the animation strip is active or not.
@@ -77,14 +75,12 @@ namespace Bison.Framework
         /// Creates a new animation strip instance.
         /// </summary>
         /// <param name="texture">The texture.</param>
-        /// <param name="name">The name.</param>
         /// <param name="frameWidth">The frame width.</param>
         /// <param name="frameHeight">The frame height.</param>
         /// <param name="frameTime">The frame delay.</param>
-        public AnimationStrip(Texture2D texture, string name, int frameWidth, int frameHeight, float frameTime)
+        public AnimationStrip(Texture2D texture, int frameWidth, int frameHeight, float frameTime)
         {
             this.texture = texture;
-            this.name = name;
             this.frameWidth = frameWidth;
             this.frameHeight = frameHeight;
             this.frameCount = this.texture.Width / frameWidth;
@@ -244,28 +240,17 @@ namespace Bison.Framework
         }
 
         /// <summary>
-        /// Gets the name of the animation strip.
-        /// </summary>
-        public string Name
-        {
-            get
-            {
-                return this.name;
-            }
-        }
-
-        /// <summary>
         /// Gets or sets the name of the next animation strip.
         /// </summary>
-        public string NextAnimation
+        public string NextAnimationKey
         {
             get
             {
-                return this.nextAnimation;
+                return this.nextAnimationKey;
             }
             set
             {
-                this.nextAnimation = value;
+                this.nextAnimationKey = value;
             }
         }
 
