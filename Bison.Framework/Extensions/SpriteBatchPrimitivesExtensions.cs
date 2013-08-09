@@ -17,7 +17,7 @@ namespace Bison.Framework
         /// <summary>
         /// The used white 1x1 pixel texture.
         /// </summary>
-        private static readonly Texture2D PixelTexture = Texture2DFactory.Create();
+        private static readonly Texture2D PixelTexture = Texture2DHelper.Create();
 
         /// <summary>
         /// Renders a line.

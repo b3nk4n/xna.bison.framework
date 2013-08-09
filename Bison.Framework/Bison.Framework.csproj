@@ -87,7 +87,7 @@
     <Compile Include="Extensions\SpriteBatchPrimitivesExtensions.cs" />
     <Compile Include="GameObject.cs" />
     <Compile Include="GameTicker.cs" />
-    <Compile Include="Graphics\Texture2DFactory.cs" />
+    <Compile Include="Graphics\Texture2DHelper.cs" />
     <Compile Include="IGameDrawable.cs" />
     <Compile Include="IGameUpdateable.cs" />
     <Compile Include="IManagedContent.cs" />

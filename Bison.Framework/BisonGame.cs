@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -25,7 +26,7 @@ namespace Bison.Framework
         /// <summary>
         /// The sprite batch to render.
         /// </summary>
-        protected SpriteBatch spriteBatch;
+        protected static SpriteBatch spriteBatch;
 
         /// <summary>
         /// The screen manager.
@@ -88,6 +89,7 @@ namespace Bison.Framework
         /// <param name="e">The launging event args.</param>
         private void gameLaunching(object sender, LaunchingEventArgs e)
         {
+            Debug.WriteLine("GameLaunching event occured.");
             this.OnGameLaunching();
         }
 
@@ -98,6 +100,24 @@ namespace Bison.Framework
         {
         }
 
+        protected override void OnActivated(object sender, EventArgs args)
+        {
+            Debug.WriteLine("Activated event occured. TODO: remove me");
+            base.OnActivated(sender, args);
+        }
+
+        protected override void OnDeactivated(object sender, EventArgs args)
+        {
+            Debug.WriteLine("Deactivated event occured. TODO: remove me");
+            base.OnDeactivated(sender, args);
+        }
+
+        protected override void OnExiting(object sender, EventArgs args)
+        {
+            Debug.WriteLine("Exiting event occured. TODO: remove me");
+            base.OnExiting(sender, args);
+        }
+
         /// <summary>
         /// Calls the game activated hook.
         /// </summary>
@@ -105,6 +125,7 @@ namespace Bison.Framework
         /// <param name="e">The activated event args.</param>
         private void gameActivated(object sender, ActivatedEventArgs e)
         {
+            Debug.WriteLine("GameActivated event occured.");
             this.OnGameActivated();
         }
 
@@ -122,6 +143,7 @@ namespace Bison.Framework
         /// <param name="e">The deactivated event args.</param>
         private void gameDeactivated(object sender, DeactivatedEventArgs e)
         {
+            Debug.WriteLine("GameDeactivated event occured.");
             this.OnGameDeactivated();
         }
 
@@ -139,6 +161,7 @@ namespace Bison.Framework
         /// <param name="e">The closing event args.</param>
         private void gameClosing(object sender, ClosingEventArgs e)
         {
+            Debug.WriteLine("GameClosed event occured.");
             this.OnGameClosing();
         }
 
@@ -223,11 +246,25 @@ namespace Bison.Framework
 
         #region Properties
 
+        /// <summary>
+        /// Gets the graphics device manager.
+        /// </summary>
         public static GraphicsDeviceManager GraphicsDeviceManager
         {
             get
             {
                 return graphics;
+            }
+        }
+
+        /// <summary>
+        /// Gets the games sprite batch.
+        /// </summary>
+        public static SpriteBatch SpriteBatch
+        {
+            get
+            {
+                return spriteBatch;
             }
         }
 

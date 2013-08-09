@@ -1,6 +1,7 @@
 using Bison.Demo.Objects;
 using Bison.Framework;
 using Bison.Framework.Controls;
+using Bison.Framework.Graphics;
 using Bison.Framework.Screens;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -59,7 +60,7 @@ namespace Bison.Demo.Screens
             number.MinDigits = 10;
 
             cow = new Cow(
-                Content.Load<Texture2D>(@"Textures/cowSheet1"),
+                Texture2DHelper.Cut(Content.Load<Texture2D>(@"Textures/cowSheet1"), Vector2.Zero, 64, 64),
                 Content.Load<Texture2D>(@"Textures/cowSheet2"),
                 Content.Load<Texture2D>(@"Textures/cowSheet3"),
                 Content.Load<Texture2D>(@"Textures/cowSheet4"));
