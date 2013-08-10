@@ -64,7 +64,7 @@
   <ItemGroup>
     <Compile Include="Circle.cs" />
     <Compile Include="Extensions\Vector2Extensions.cs" />
-    <Compile Include="MultiSprite.cs" />
+    <Compile Include="StoryboardSprite.cs" />
     <Compile Include="AnimationStrip.cs" />
     <Compile Include="Animation\Animation.cs" />
     <Compile Include="Animation\FadeAnimation.cs" />
@@ -107,6 +107,7 @@
     <Compile Include="Settings\IAudioSettings.cs" />
     <Compile Include="Settings\IVibrationSettings.cs" />
     <Compile Include="Sprite.cs" />
+    <Compile Include="AnimatedSprite.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Effects\" />

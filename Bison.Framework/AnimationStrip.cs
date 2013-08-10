@@ -13,7 +13,7 @@ namespace Bison.Framework
     /// <remarks>
     /// Each animation strip just contains a single line with no unnecessary texture padding.
     /// </remarks>
-    public class AnimationStrip : IGameUpdateable
+    internal class AnimationStrip : IGameUpdateable
     {
         #region Members
 

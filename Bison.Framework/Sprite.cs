@@ -12,10 +12,22 @@ namespace Bison.Framework
     /// </summary>
     public class Sprite : GameObject, IGameDrawable
     {
+        #region Members
+
         /// <summary>
-        /// The base animation strip.
+        /// The sprites texture.
         /// </summary>
-        private AnimationStrip baseAnimation;
+        private Texture2D texture;
+
+        /// <summary>
+        /// The sprites frame width.
+        /// </summary>
+        private int frameWidth;
+
+        /// <summary>
+        /// The sprites frame height.
+        /// </summary>
+        private int frameHeight;
 
         /// <summary>
         /// Indicates whether the game object is visible or not.
@@ -32,16 +44,28 @@ namespace Bison.Framework
         /// </summary>
         private Color tintColor = Color.White;
 
+        #endregion
+
+        #region Constructors
+
         /// <summary>
         /// Creates a new sprite instance.
         /// </summary>
-        public Sprite(Texture2D texture, int frameWidth, int frameHeight, float frameTime)
+        /// <param name="texture">The texture.</param>
+        /// <param name="frameWidth">The frame width.</param>
+        /// <param name="frameHeight">The frame height.</param>
+        public Sprite(Texture2D texture, int frameWidth, int frameHeight)
         {
-            this.baseAnimation = new AnimationStrip(texture, frameWidth, frameHeight, frameTime);
-            this.baseAnimation.LoopAnimation = true;
+            this.texture = texture;
+            this.frameWidth = frameWidth;
+            this.frameHeight = frameHeight;
 
             this.isVisible = true;
         }
+
+        #endregion
+
+        #region Methods
 
         /// <summary>
         /// Renders the game object if it is visible.
@@ -51,12 +75,10 @@ namespace Bison.Framework
         {
             if (IsVisible)
             {
-                var currentAnimation = GetCurrentAnimation();
-
                 batch.Draw(
-                    currentAnimation.Texture,
+                    GetCurrentTexture(),
                     Camera.WorldToScreen(Center),
-                    currentAnimation.FrameRectangle,
+                    GetCurrentFrame(),
                     tintColor,
                     Rotation,
                     new Vector2(SourceWidth / 2, SourceHeight / 2),
@@ -85,12 +107,24 @@ namespace Bison.Framework
         }
 
         /// <summary>
-        /// Gets the current animation.
+        /// Gets the current frame source.
         /// </summary>
-        protected virtual AnimationStrip GetCurrentAnimation()
+        protected virtual Rectangle GetCurrentFrame()
         {
-            return this.baseAnimation;
+            return new Rectangle(0, 0, frameWidth, frameHeight);
         }
+
+        /// <summary>
+        /// Gets the current frame texture.
+        /// </summary>
+        protected virtual Texture2D GetCurrentTexture()
+        {
+            return this.texture;
+        }
+
+        #endregion
+
+        #region Properties
 
         /// <summary>
         /// Gets or sets whether the game object is visible or not.
@@ -144,7 +178,7 @@ namespace Bison.Framework
         {
             get
             {
-                return this.GetCurrentAnimation().FrameWidth;
+                return this.GetCurrentFrame().Width;
             }
         }
 
@@ -155,8 +189,10 @@ namespace Bison.Framework
         {
             get
             {
-                return this.GetCurrentAnimation().FrameHeight;
+                return this.GetCurrentFrame().Height;
             }
         }
+
+        #endregion
     }
 }

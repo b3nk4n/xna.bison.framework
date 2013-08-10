@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Bison.Demo.Objects
 {
-    class Cow : MultiSprite
+    class Cow : StoryboardSprite
     {
         public Cow(Texture2D tex1, Texture2D tex2, Texture2D tex3, Texture2D tex4)
             : base(tex1, 64, 64, 0.25f)
