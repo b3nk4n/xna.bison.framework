@@ -81,7 +81,7 @@ namespace Bison.Demo.Screens
             rotatedCow.RotateToDirection(new Vector2(0, -1));
             rotatedCow.SetupCollisionCircles(
                 new[] {
-                    new Circle(Vector2.Zero, 28.0f)
+                    new Circle(new Vector2(0, 10), 25.0f)
                 });
             rotatedCow.PlayAnimation("cow1");
 

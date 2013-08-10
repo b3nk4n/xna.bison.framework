@@ -151,7 +151,7 @@ namespace Bison.Framework.Screens
         {
             batch.Begin();
 
-            foreach (var screen in screenStack)
+            foreach (var screen in screenStack.Reverse())
             {
                 screen.Draw(batch);
             }
