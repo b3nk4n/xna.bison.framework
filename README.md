@@ -1,5 +1,5 @@
-<div align="center" style="background-color: black;">
-  <img src="https://github.com/bsautermeister/xna.bison.framework/blob/master/Bison.Demo/Bison.DemoContent/Textures/BisonSplashscreen.png" alt="Planetary Defense"><br>
+<div align="center">
+  <img src="https://github.com/bsautermeister/xna.bison.framework/blob/master/Assets/logo.png" alt="Bison Framework"><br>
 </div>
 ---
 
